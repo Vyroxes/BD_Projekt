@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
+
+:root {
+  font-family: "Poppins", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+input,
+input:-webkit-autofill
+{  
+  box-shadow: 0 0 0 20px #1a1a1a inset;
+  -webkit-box-shadow: 0 0 0 20px #1a1a1a inset;
+  border: 2px solid rgb(69, 69, 69);
+  background-color: #1a1a1a;
+  padding: 0.5rem 0.8rem !important;
+  outline: none;
+  transition:
+    border 0.2s ease,
+    background-color 0.2s ease,
+    accent-color 0.2s ease;
+}
+
+input:hover,
+input:-webkit-autofill:hover {
+  border: 2px solid rgb(153, 153, 153);
+  transition:
+    border 0.2s ease;
+}
+
+input:focus,
+input:-webkit-autofill:focus {
+  border: 2px solid rgb(153, 153, 153);
+  background-color: #2d2d2d;
+  box-shadow: 0 0 0 20px #2d2d2d inset;
+  -webkit-box-shadow: 0 0 0 20px #2d2d2d inset;
+  padding: 0.5rem 0.8rem !important;
+  transition:
+    border 0.2s ease,
+    background-color 0.2s ease;
+}
+
+input:disabled {
+  background-color: #434343;
+  -webkit-box-shadow: 0 0 0 20px #434343 inset;
+  box-shadow: 0 0 0 20px #434343 inset;
+  border: 2px solid rgb(33, 33, 33);
+}
+
+input[type="checkbox"] {
+  accent-color: #b6b6b6; 
+  box-shadow: 0 0 0 0;
+  -webkit-box-shadow: 0 0 0 0;
+}
+
+input[type="checkbox"]:hover {
+  accent-color: #ffffff; 
+}
+
+button {
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  padding: 0.6em 1.2em;
+  font-size: large;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition:
+    border 0.2s ease;
+}
+button:hover {
+  border: 2px solid rgb(153, 153, 153);
+  background-color: #2d2d2d;
+  transition:
+    border 0.2s ease,
+    background-color 0.2 ease;
+}
+
+button:disabled {
+  color: #515151;
+  cursor: auto;
+  transition:
+    color 0.2 ease;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

@@ -1,0 +1,11 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container {
+  height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
