@@ -1,4 +1,5 @@
 @echo off
-cd /d C:\Users\Vyrox\BD_Projekt\src
+cd /d "%~dp0"
 start cmd /k "npm run dev"
-echo http://localhost:5173/ | clip
+
+start http://localhost:5173/

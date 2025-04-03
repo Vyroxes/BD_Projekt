@@ -1,16 +1,14 @@
-import React, { useState, useEffect} from "react";
-import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
-import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { isAuthenticated, authAxios, setTokens } from '../utils/Auth';
 
 import './Login.css';
 import './Register.css';
 
-const Register = () => {
+const Register = ({ onLogin }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -19,126 +17,49 @@ const Register = () => {
     const [dataError, setDataError] = useState("");
     const [loginError, setLoginError] = useState("");
 
-    const signIn = useSignIn();
     const navigate = useNavigate();
-    const isAuthenticated = useIsAuthenticated();
 
-    const isDisabled = dataError !== "" || username.trim() === "" || email.trim() === ""  || password.trim() === "" || password2.trim() === "";
-    const isDisabled2 = password.trim() === "";
-    const isDisabled3 = password.trim() === "" || (dataError !== '' && dataError !== "Hasła muszą być jednakowe." && dataError !== "Nazwa użytkownika nie może zawierać spacji." && dataError !== "Email nie może zawierać spacji." && dataError !== "Hasło nie może zawierać spacji.")
+    useEffect(() => {
+        const checkAuth = async () => {
+            const result = await isAuthenticated();
+            if (result) {
+                navigate("/home");
+            }
+        };
+        checkAuth();
+    }, [navigate]);
 
-    const spacebar = /\s/;
-    const number = /\d/;
-    const specialchar = /[!@#$%^&*(),.?":{}|<>]/;
-
-    useEffect(() => 
-    {
-        if (isAuthenticated) 
-        {
-            navigate('/home');
-        }
-    }, [isAuthenticated, navigate]);
+    const isDisabled = dataError !== "" || username.trim() === "" || email.trim() === "" || password.trim() === "" || password2.trim() === "";
 
     const onSubmit = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/register", {
+            const response = await authAxios.post("/api/register", {
                 username,
                 email,
                 password,
-            }, {
-                withCredentials: true
             });
 
-            if (response.status == 201)
-            {
-                console.log(response.data.message);
-                if(signIn({
-                    auth: {
-                        token: response.data.access_token,
-                        type: 'Bearer'
-                    },
-                    userState: {
-                        name: response.data.username,
-                    }
-                }))
-                {
-                    navigate('/home');
-                }
+            if (response.status === 201) {
+                setTokens(
+                    response.data.access_token,
+                    response.data.refresh_token,
+                    response.data.expire_time,
+                    response.data.refresh_expire_time,
+                    response.data.username,
+                    response.data.email
+                );
+                onLogin();
+                navigate('/home');
             }
         } catch (error) {
             console.error("Błąd podczas rejestrowania: ", error);
 
             if (error.response && error.response.data && error.response.data.message) {
                 setLoginError(error.response.data.message);
-            }
-            else
-            {
+            } else {
                 setLoginError("Błąd podczas rejestrowania.");
             }
         }
-    };
-
-    const checkUsername = (value) => {
-        if (spacebar.test(value)) {
-            setDataError("Nazwa użytkownika nie może zawierać spacji.");
-            value = value.replace(/\s/g, "");
-
-            setTimeout(() => {
-                setDataError("");
-            }, 2000);
-        }
-
-        setUsername(value);
-    };
-
-    const checkEmail = (value) => {
-        if (spacebar.test(value)) {
-            setDataError("Email nie może zawierać spacji.");
-            value = value.replace(/\s/g, "");
-
-            setTimeout(() => {
-                setDataError("");
-            }, 2000);
-        }
-
-        setEmail(value);
-    };
-
-    const checkPassword = (value) => {
-        if (spacebar.test(value)) {
-            setDataError("Hasło nie może zawierać spacji.");
-            value = value.replace(/\s/g, "");
-
-            setTimeout(() => {
-                setDataError("");
-            }, 2000);
-        } else if (value.length < 8 || value.length > 20) {
-            setDataError("Hasło musi zawierać od 8 do 20 znaków.");
-        } else if (!number.test(value)) {
-            setDataError("Hasło musi zawierać co najmniej jedną cyfrę.");
-        } else if (!specialchar.test(value)) {
-            setDataError('Hasło musi zawierać co najmniej jeden znak specjalny [!@#$%^&*(),.?":{}|<>].');
-        } else {
-            setDataError('');
-        }
-
-        setPassword(value);
-    };
-
-    const checkPassword2 = (value) => {
-        if (spacebar.test(value)) {
-            setDataError("Hasło nie może zawierać spacji.");
-            value = value.replace(/\s/g, "");
-        }
-        else if (value !== password) {
-            setDataError("Hasła muszą być jednakowe.");
-        }
-        else
-        {
-            setDataError("");
-        }
-
-        setPassword2(value);
     };
 
     const handleSubmit = async (e) => {
@@ -156,7 +77,7 @@ const Register = () => {
                 <h1>Rejestrowanie</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="login-group">
-                        <FaUser className="login-icons"/>
+                        <FaUser className="login-icons" />
                         <input
                             type="text"
                             id="username"
@@ -166,11 +87,11 @@ const Register = () => {
                             maxLength="20"
                             placeholder="Nazwa użytkownika"
                             value={username}
-                            onChange={(e) => { checkUsername(e.target.value) }}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
                     <div className="login-group">
-                        <MdAlternateEmail className="login-icons"/>
+                        <MdAlternateEmail className="login-icons" />
                         <input
                             type="email"
                             id="email"
@@ -180,11 +101,11 @@ const Register = () => {
                             maxLength="320"
                             placeholder="Email"
                             value={email}
-                            onChange={(e) => { checkEmail(e.target.value) }}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div className="login-group">
-                        <FaLock className="login-icons"/>
+                        <FaLock className="login-icons" />
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password"
@@ -194,13 +115,12 @@ const Register = () => {
                             maxLength="20"
                             placeholder="Hasło"
                             value={password}
-                            onChange={(e) => { checkPassword(e.target.value) }}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <div>
                             <button
                                 className="register-button-show-password"
                                 type="button"
-                                disabled={isDisabled2}
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
@@ -208,7 +128,7 @@ const Register = () => {
                         </div>
                     </div>
                     <div className="login-group">
-                        <FaLock className="login-icons"/>
+                        <FaLock className="login-icons" />
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password2"
@@ -218,8 +138,7 @@ const Register = () => {
                             maxLength="20"
                             placeholder="Powtórz hasło"
                             value={password2}
-                            disabled={isDisabled3}
-                            onChange={(e) => { checkPassword2(e.target.value) }}
+                            onChange={(e) => setPassword2(e.target.value)}
                         />
                     </div>
                     {dataError && <div className="register-error-text">

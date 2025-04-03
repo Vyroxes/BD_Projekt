@@ -1,0 +1,166 @@
+.book-collection-bar {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-collection-bar-container2,
+.book-collection-bar-container4 {
+    width: 100%;
+}
+
+.book-collection-bar-container3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    margin: 0 20px;
+}
+
+.book-collection-bar-container1,
+.book-collection-bar-container5 {
+    width: 20%;
+}
+
+.book-collection-bar-container2 {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+.book-collection-bar-container2 button {
+    width: 240px;
+}
+
+.book-collection-bar-container3 input {
+    width: 100%;
+}
+
+.book-collection-bar-container4 {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 20px;
+}
+
+.book-collection-bar-container1 {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-left: 20px;
+}
+
+.book-collection-bar-container5 {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-right: 20px;
+}
+
+.book-collection-search-button {
+    font-size: x-large;
+    padding: 0.4rem 0.4rem 0rem 0.4rem;
+    background: transparent;
+    border: none !important;
+    border-radius: 20px;
+    position: absolute;
+    right: 38.3%;
+    top: 7.1%;
+    color: #b6b6b6;
+    transition: color 0.2s ease;
+}
+
+.book-collection-search-button:disabled:hover {
+    background: transparent;
+    color: #b6b6b6;
+    transition: color 0.2s ease;
+}
+
+.book-collection-search-button:hover {
+    background: transparent;
+    color: #ffffff;
+    transition: color 0.2s ease;
+}
+
+.book-collection-filter {
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    gap: 40px;
+}
+
+.book-collection-filter-genres {
+    margin-left: 20px;
+    width: 100%;
+    text-align: left;
+}
+
+.book-collection-filter-genres label {
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.book-collection-filter-genres input {
+    margin-right: 10px;
+}
+
+.book-collection-filter-genres h3 {
+    text-align: center;
+}
+
+.book-collection-filter-controls {
+    width: 10%;
+}
+
+.book-collection-filter-button {
+    margin-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.book-collection-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    padding: 20px;
+    gap: 20px;
+}
+
+.book-collection-container:has(.no-books) {
+    height: calc(100vh - 187px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.book-card {
+    background: linear-gradient(to bottom, #323232, #353535);
+    padding: 1rem;
+    border-radius: 30px;
+    border: 2px solid #191919;
+    cursor: pointer;
+    height: fit-content;
+}
+
+.book-card:hover {
+    background: linear-gradient(to bottom, #474747, #363636);
+    border: 2px solid #d7d7d7;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.book-card img {
+    height: 300px;
+    width: 200px;
+    border-radius: 20px;
+    object-fit: fill;
+    border: 2px solid #191919;
+}
+
+.book-card p {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 10px auto auto;
+}

@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react';
-import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
-import { useNavigate } from "react-router-dom";
+import React from 'react';
 
-const Home = () =>
-{
-    const isAuthenticated = useIsAuthenticated();
-    const navigate = useNavigate();
+import './Home.css';
 
-    useEffect(() => 
-    {
-        if (!isAuthenticated) 
-        {
-            navigate('/login');
-        }
-    }, [isAuthenticated, navigate]);
-
+const Home = () => {
     return (
-        <div className='container'>
-            <label>Strona główna</label>
+        <div className='home-container'>
+            <h1>Aplikacja do zarządzania kolekcją książek</h1>
+            <h3>
+                Ta aplikacja umożliwia zarządzanie wirtuaną biblioteką książek.
+                Użytkownicy mogą dodawać książki ręcznie lub za pomocą kodu ISBN,
+                przeglądać szczegóły książek, edytować oraz usuwać książki oraz
+                przenosić je między kolekcją a listą życzeń. Dodatkowo, aplikacja
+                pozwala na ocenianie i recenzowanie książek. To wygodne narzędzie do
+                organizowania swojej wirtualnej biblioteki. O problemach należy
+                informować przez formularz kontaktowy.
+            </h3>
         </div>
     );
 };

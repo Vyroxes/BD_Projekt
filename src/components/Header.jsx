@@ -1,25 +1,28 @@
-import React, { useState } from "react";
 import { CiLogout } from "react-icons/ci";
-import useSignOut from 'react-auth-kit/hooks/useSignOut';
-import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
-import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
+import { useNavigate } from "react-router-dom";
+import { isAuthenticated, getCookie, clearTokens, authAxios } from '../utils/Auth';
 
 import './Header.css';
 
 const Header = () => {
-    const isAuthenticated = useIsAuthenticated();
-    const signOut = useSignOut();
-    const authUser = useAuthUser();
-    let username = "";
+    const username = isAuthenticated() ? getCookie("username") : "";
+    const navigate = useNavigate();
 
-    if(isAuthenticated)
-    {
-        username = authUser.name;
-    }
-    
-    const handleLogout = () => {
-        signOut();
-    }
+    const handleLogout = async () => {
+        try {
+            const response = await authAxios.post("/api/logout", {
+                refresh_token: getCookie("refresh_token")
+            });
+            
+            if (response.status === 200) {
+                console.log("Wylogowano pomyślnie");
+                clearTokens();
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error("Błąd podczas wylogowania: ", error);
+        }
+    };
 
     return (
         <header className="header">
@@ -40,9 +43,14 @@ const Header = () => {
                     <li className={location.pathname === "/contact" ? "active" : ""}>
                         <a href="/contact">KONTAKT</a>
                     </li>
-                    <li onClick={handleLogout}>
-                        <a href="/login">{username}&nbsp;<CiLogout className="logout-icon"/></a>
-                    </li>
+                    {isAuthenticated() && (
+                        <li onClick={(e) => {
+                            e.preventDefault();
+                            handleLogout();
+                        }}>
+                            <a>{username}&nbsp;<CiLogout className="logout-icon"/></a>
+                        </li>
+                    )}
                 </ul>
             </nav>
         </header>

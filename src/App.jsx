@@ -1,46 +1,66 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import createStore from 'react-auth-kit/createStore';
-import AuthProvider from 'react-auth-kit';
+import { isAuthenticated } from './utils/Auth';
+
 import './App.css';
 
 const Login = lazy(() => import('./components/Login'));
 const Register = lazy(() => import('./components/Register'));
 const Home = lazy(() => import('./components/Home'));
-const BookCollection = lazy(() => import('./components/BookCollection'));
-const WishList = lazy(() => import('./components/WishList'));
+const Books = lazy(() => import('./components/Books'));
+const BookDetails = lazy(() => import('./components/BookDetails'));
+const AddBook = lazy(() => import('./components/AddBook'));
+const EditBook = lazy(() => import('./components/EditBook'));
+const ReviewBook = lazy(() => import('./components/ReviewBook'));
 const Premium = lazy(() => import('./components/Premium'));
 const Contact = lazy(() => import('./components/Contact'));
 const Header = lazy(() => import('./components/Header'));
 const Footer = lazy(() => import('./components/Footer'));
 
-const store = createStore({
-  authName:'access_token',
-  authType:'cookie',
-  cookieDomain: window.location.hostname,
-  cookieSecure: true,
-});
-
-const App = () =>
-{
+const App = () => {
   const location = useLocation();
 
+  const [authState, setAuthState] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const result = await isAuthenticated();
+      setAuthState(result);
+    };
+
+    checkAuth();
+  }, [location]);
+
+  if (authState === null) {
+    return null;
+  }
+
   return (
-    <AuthProvider store={store}>
-      {location.pathname !== '/login' && location.pathname !== '/register' && (<Suspense><Header/></Suspense>)}
-      <Routes>
-        <Route path="/login" element={<Suspense><Login/></Suspense>}/>
-        <Route path="/register" element={<Suspense><Register/></Suspense>}/>
-        <Route path="/home" element={<Suspense><Home/></Suspense>}/>
-        <Route path="/book-collection" element={<Suspense><BookCollection/></Suspense>}/>
-        <Route path="/wish-list" element={<Suspense><WishList/></Suspense>}/>
-        <Route path="/contact" element={<Suspense><Contact/></Suspense>}/>
-        <Route path="/premium" element={<Suspense><Premium/></Suspense>}/>
-        <Route path="*" element={<Navigate to="/home"/>}/>
-      </Routes>
-      {location.pathname !== '/login' && location.pathname !== '/register' && (<Suspense><Footer/></Suspense>)}
-    </AuthProvider>
+    <Suspense>
+      <div className='app'>
+        {location.pathname !== '/login' && location.pathname !== '/register' && (<Header />)}
+        <Routes>
+          <Route path="/login" element={<Login onLogin={() => setAuthState(true)}/>} />
+          <Route path="/register" element={<Register onLogin={() => setAuthState(true)}/>} />
+          <Route path="/home" element={authState ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/book-collection" element={authState ? <Books /> : <Navigate to="/login" />} />
+          <Route path="/wish-list" element={authState ? <Books /> : <Navigate to="/login" />} />
+          <Route path="/bc-book-details/:id" element={authState ? <BookDetails /> : <Navigate to="/login" />} />
+          <Route path="/wl-book-details/:id" element={authState ? <BookDetails /> : <Navigate to="/login" />} />
+          <Route path="/bc-add-book" element={authState ? <AddBook /> : <Navigate to="/login" />} />
+          <Route path="/wl-add-book" element={authState ? <AddBook /> : <Navigate to="/login" />} />
+          <Route path="/bc-edit-book/:id" element={authState ? <EditBook /> : <Navigate to="/login" />} />
+          <Route path="/wl-edit-book/:id" element={authState ? <EditBook /> : <Navigate to="/login" />} />
+          <Route path="/bc-review-book/:id" element={authState ? <ReviewBook /> : <Navigate to="/login" />} />
+          <Route path="/wl-review-book/:id" element={authState ? <ReviewBook /> : <Navigate to="/login" />} />
+          <Route path="/contact" element={authState ? <Contact /> : <Navigate to="/login" />} />
+          <Route path="/premium" element={authState ? <Premium /> : <Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/home" />} />
+        </Routes>
+        {location.pathname !== '/login' && location.pathname !== '/register' && (<Footer />)}
+      </div>
+    </Suspense>
   );
-}
+};
 
 export default App;

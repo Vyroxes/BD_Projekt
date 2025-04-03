@@ -1,0 +1,32 @@
+.review-book-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.review-book-row {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.review-book-row input,
+.review-book-row textarea {
+    width: calc(100vw / 4);
+    min-width: calc(100vw / 4);
+    max-width: calc(100vw / 4);
+    max-height: 400px;
+} 
+
+.review-book-buttons {
+    margin-top: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}

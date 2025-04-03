@@ -1,10 +1,10 @@
 .container-login2:has(.register-error-text) .register-button-show-password,
 .container-login2:has(.register-error-text2) .register-button-show-password {
-    top: 45.6%;
+    top: 46.1%;
 }
 
 .container-login2:has(.register-error-text):has(.register-error-text2) .register-button-show-password {
-    top: 42.5%;
+    top: 43.2%;
 }
 
 .register-button-show-password {
@@ -13,15 +13,21 @@
     border: none !important;
     border-radius: 20px;
     position: absolute;
-    right: 13.5%;
-    top: 49.4%;
+    right: 13.7%;
+    top: 49.8%;
+    color: #b6b6b6;
+    transition: color 0.2s ease;
+}
+
+.register-button-show-password:disabled:hover {
+    background: transparent;
     color: #b6b6b6;
     transition: color 0.2s ease;
 }
 
 .register-button-show-password:hover {
     background: transparent;
-    color: #b6b6b6;
+    color: #ffffff;
     transition: color 0.2s ease;
 }
 

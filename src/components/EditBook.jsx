@@ -1,0 +1,408 @@
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { authAxios } from '../utils/Auth';
+
+import './AddBook.css';
+
+const EditBook = () =>
+{
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [showCover, setShowCover] = useState(false);
+    const [checkedList, setCheckedList] = useState([]);
+    const [book, setBook] = useState([]);
+
+    const [isbn, setISBN] = useState("");
+    const [cover, setCover] = useState("");
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+    const [genres, setGenres] = useState("");
+    const [publisher, setPublisher] = useState("");
+    const [date, setDate] = useState("");
+    const [pages, setPages] = useState("");
+    const [desc, setDesc] = useState("");
+
+    const { id } = useParams();
+
+    const genresList = [
+        "fantasy",
+        "science-fiction",
+        "horror",
+        "romans",
+        "thriller",
+        "kryminał",
+        "historia",
+        "poradnik",
+        "dla dzieci",
+        "dla młodzieży",
+        "komiks",
+        "manga",
+        "na podstawie gry",
+        "lektura",
+        "beletrystyka",
+        "poezja",
+        "erotyczne",
+        "literatura piękna",
+        "przygoda",
+        "sensacja",
+        "biografia i reportaż",
+        "popularnonaukowe",
+    ];
+
+    useEffect(() => {
+        checkBookID();
+    }, []);
+
+    useEffect(() => 
+    {
+        if (book && Object.keys(book).length > 0) 
+        {
+            setISBN(book.isbn);
+            setCover(book.cover || "/unknown.jpg");
+            setTitle(book.title);
+            setAuthor(book.author);
+            setGenres(book.genres);
+            setPublisher(book.publisher);
+            const parts = book.date.split("-");
+            const [day, month, year] = parts;
+            const formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+            setDate(formattedDate);
+            setPages(book.pages);
+            setDesc(book.desc);
+            setCheckedList(book.genres.split(", "));
+        }
+    }, [book]);
+
+    const checkBookID = async () => 
+    {
+        try 
+        {
+            let response;
+
+            if (location.pathname.startsWith("/bc-edit-book/")) {
+                response = await authAxios.get(`/api/bc-book-exists/${id}`);
+            } else if (location.pathname.startsWith("/wl-edit-book/")) {
+                response = await authAxios.get(`/api/wl-book-exists/${id}`);
+            }
+
+            if (response.status === 200) {
+                if (response.data['exists'] === false) {
+                    if (location.pathname.startsWith("/bc-edit-book/")) {
+                        navigate(`/bc-book-details/${id}`);
+                    } else if (location.pathname.startsWith("/wl-edit-book/")) {
+                        navigate(`/wl-book-details/${id}`);
+                    }
+                } else {
+                    fetchBook();
+                }
+            } else {
+                navigate('/home');
+            }
+        } catch (error) {
+            console.error('Error checking book ID:', error);
+            navigate('/home');
+        }
+    };
+
+    const fetchBook = async () => 
+    {
+        try 
+        {
+            let response;
+
+            if (location.pathname.startsWith("/bc-edit-book/")) {
+                response = await authAxios.get(`/api/bc-book-details/${id}`);
+            } else if (location.pathname.startsWith("/wl-edit-book/")) {
+                response = await authAxios.get(`/api/wl-book-details/${id}`);
+            }
+
+            if (response.status === 200) {
+                setBook(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching book details:', error);
+        }
+    };
+
+    useEffect(() => 
+    {
+        setGenres(checkedList.sort((a, b) => genresList.indexOf(a) - genresList.indexOf(b)).join(", "));
+    }, [checkedList]);
+
+    const handleFileUpload = (file) =>
+    {
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Plik jest za duży. Maksymalny rozmiar to 5 MB.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCover(reader.result);
+        };
+
+        reader.onerror = () => {
+            console.error("Błąd podczas odczytu pliku: ", error);
+            alert("Wystąpił problem z odczytem pliku.");
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    const onSubmit = async () => {
+        try {
+            let response;
+
+            if (location.pathname.startsWith("/bc-edit-book/")) {
+                response = await authAxios.post(`/api/bc-edit-book/${id}`, {
+                    title,
+                    author,
+                    cover,
+                    genres,
+                    publisher,
+                    date,
+                    pages,
+                    isbn,
+                    desc,
+                });
+            } else if (location.pathname.startsWith("/wl-edit-book/")) {
+                response = await authAxios.post(`/api/wl-edit-book/${id}`, {
+                    title,
+                    author,
+                    cover,
+                    genres,
+                    publisher,
+                    date,
+                    pages,
+                    isbn,
+                    desc,
+                });
+            }
+
+            if (response.status === 200) {
+                if (location.pathname.startsWith("/bc-edit-book/")) {
+                    navigate(`/bc-book-details/${id}`);
+                } else if (location.pathname.startsWith("/wl-edit-book/")) {
+                    navigate(`/wl-book-details/${id}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error submitting book edit:', error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (checkedList.length === 0) {
+            alert("Musisz wybrać przynajmniej jeden gatunek.");
+            return;
+        }
+
+        await onSubmit();
+    };
+
+    const handleGenreChange = (event) => 
+    {
+        const { checked, value } = event.target;
+    
+        setCheckedList((prev) => 
+        {
+            if (checked) 
+            {
+                return [...prev, value];
+            } 
+            else 
+            {
+                return prev.filter((genre) => genre !== value);
+            }
+        });
+    };
+
+    return (
+        <div>
+            <div className="add-book-container">
+                <div className="add-book-form">
+                    <h1>Dodaj książkę</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="add-book-row">
+                            <label>
+                                Okładka (URL):
+                                <input
+                                    type="text"
+                                    id="cover"
+                                    name='cover'
+                                    value={cover}
+                                    onChange={(e) => setCover(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Okładka (wybierz plik):
+                                <input
+                                    type="file"
+                                    id='file'
+                                    name='file'
+                                    accept="image/*"
+                                    onChange={(e) => handleFileUpload(e.target.files[0])}
+                                />
+                            </label>
+                            <button type="button" onClick={() => setShowCover(!showCover)}>
+                                {showCover ? "Ukryj podgląd okładki" : "Pokaż podgląd okładki"}
+                            </button>
+                        </div>
+                        {showCover && (
+                        <div className="add-book-cover">
+                            <img src={cover || "unknown.jpg"} alt="Podgląd okładki" style={{ maxWidth: "350px", maxHeight: "500px" }} />
+                        </div>
+                        )}
+                        <div className="add-book-row">
+                            <label>
+                                Tytuł:
+                                <input
+                                    type="text"
+                                    id='title'
+                                    name='title'
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    required
+                                    minLength="2"
+                                    maxLength="100"
+                                />
+                            </label>
+                            <label>
+                                Autor:
+                                <input
+                                    type="text"
+                                    id='author'
+                                    name='author'
+                                    value={author}
+                                    onChange={(e) => setAuthor(e.target.value)}
+                                    required
+                                    minLength="5"
+                                    maxLength="100"
+                                />
+                            </label>
+                        </div>
+                        <div className="add-book-row-genres">
+                            {/* <label>
+                                Gatunki:
+                                <input
+                                    type="text"
+                                    id='genres'
+                                    name='genres'
+                                    value={genres}
+                                    onChange={(e) => setGenres(e.target.value)}
+                                    required
+                                    minLength="5"
+                                    maxLength="100"
+                                />
+                            </label> */}
+                            <a>Gatunki:</a>
+                            {genresList.map((genre) => (
+                                <label key={genre}>
+                                    <input
+                                        type="checkbox"
+                                        id={genre}
+                                        name={genre}
+                                        value={genre}
+                                        checked={checkedList.includes(genre)}
+                                        onChange={handleGenreChange}
+                                    />
+                                    {genre}
+                                </label>
+                            ))}
+                        </div>
+                        <div className="add-book-row">
+                            <label>
+                                Wydawnictwo:
+                                <input
+                                    type="text"
+                                    id='publisher'
+                                    name='publisher'
+                                    value={publisher}
+                                    onChange={(e) => setPublisher(e.target.value)}
+                                    required
+                                    minLength="5"
+                                    maxLength="100"
+                                />
+                            </label>
+                        </div>
+                        <div className="add-book-row">
+                            <label>
+                                Data wydania:
+                                <input
+                                    type="date"
+                                    id='date'
+                                    name='date'
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                Liczba stron:
+                                <input
+                                    type="number"
+                                    id='pages'
+                                    name='pages'
+                                    value={pages}
+                                    onChange={(e) => setPages(e.target.value)}
+                                    required
+                                    min={1}
+                                    max={9999}
+                                />
+                            </label>
+                        </div>
+                        <div className="add-book-row">
+                            <label>
+                                ISBN:
+                                <input
+                                    type="number"
+                                    id='isbn'
+                                    name='isbn'
+                                    value={isbn}
+                                    onChange={(e) => setISBN(e.target.value)}
+                                    required
+                                    min={1000000000000}
+                                    max={9999999999999}
+                                />
+                            </label>
+                        </div>
+                        <div className="add-book-row">
+                            <a>Opis:</a>
+                            <textarea
+                                type="text"
+                                id='desc'
+                                name='desc'
+                                value={desc}
+                                onChange={(e) => setDesc(e.target.value)}
+                                required
+                                minLength="1"
+                                maxLength="5000"
+                            />
+                        </div>
+                        <div className="add-book-buttons">
+                            <button type="submit">Edytuj książkę</button>
+                            <button type="button" onClick={() => {
+                                if(location.pathname.startsWith("/bc-edit-book/"))
+                                {
+                                    navigate(`/bc-book-details/${id}`);
+                                }
+                                else if(location.pathname.startsWith("/wl-edit-book/"))
+                                {
+                                    navigate(`/wl-book-details/${id}`);
+                                }
+                            }}>
+                                Anuluj
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default EditBook;

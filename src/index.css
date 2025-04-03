@@ -2,26 +2,17 @@
 
 :root {
   font-family: "Poppins", sans-serif;
-  line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #202020;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  overflow-y: scroll;
 }
 
 body {
@@ -30,15 +21,28 @@ body {
   min-height: 100vh;
 }
 
+textarea {
+  padding: 10px 15px 5px !important;
+  min-width: 300px;
+  min-height: 60px;
+  max-width: calc(100vw * 0.9);
+  max-height: 500px;
+  box-shadow: 0 0 0 0 !important;
+  -webkit-box-shadow: 0 0 0 0 !important;
+}
+
 input,
+textarea,
 input:-webkit-autofill
 {  
-  box-shadow: 0 0 0 20px #1a1a1a inset;
-  -webkit-box-shadow: 0 0 0 20px #1a1a1a inset;
+  font-size: large;
+  box-shadow: 0 0 0 25px #1a1a1a inset;
+  -webkit-box-shadow: 0 0 0 25px #1a1a1a inset;
   border: 2px solid rgb(69, 69, 69);
   background-color: #1a1a1a;
-  padding: 0.5rem 0.8rem !important;
+  padding: 10px 15px;
   outline: none;
+  border-radius: 30px;
   transition:
     border 0.2s ease,
     background-color 0.2s ease,
@@ -46,6 +50,7 @@ input:-webkit-autofill
 }
 
 input:hover,
+textarea:hover,
 input:-webkit-autofill:hover {
   border: 2px solid rgb(153, 153, 153);
   transition:
@@ -53,21 +58,24 @@ input:-webkit-autofill:hover {
 }
 
 input:focus,
+textarea:focus,
 input:-webkit-autofill:focus {
   border: 2px solid rgb(153, 153, 153);
   background-color: #2d2d2d;
-  box-shadow: 0 0 0 20px #2d2d2d inset;
-  -webkit-box-shadow: 0 0 0 20px #2d2d2d inset;
-  padding: 0.5rem 0.8rem !important;
+  box-shadow: 0 0 0 25px #2d2d2d inset;
+  -webkit-box-shadow: 0 0 0 25px #2d2d2d inset;
   transition:
     border 0.2s ease,
     background-color 0.2s ease;
 }
 
-input:disabled {
+input:disabled,
+textarea:disabled,
+input:-webkit-autofill:disabled {
+  font-size: large;
   background-color: #434343;
-  -webkit-box-shadow: 0 0 0 20px #434343 inset;
-  box-shadow: 0 0 0 20px #434343 inset;
+  -webkit-box-shadow: 0 0 0 25px #434343 inset;
+  box-shadow: 0 0 0 25px #434343 inset;
   border: 2px solid rgb(33, 33, 33);
 }
 

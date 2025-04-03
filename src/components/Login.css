@@ -25,9 +25,6 @@
 .container-login input[type="email"],
 .container-login input[type="password"] {
     width: 280px;
-    padding: 0.5rem;
-    border-radius: 30px;
-    font-size: 1em;
     margin-left: 10px;
 }
 
@@ -52,8 +49,8 @@
     margin-bottom: 10px;
 }
 
-.container-login2:has(.error-text) .login-button-show-password {
-    top: 35.5%;
+.container-login2:has(.login-error-text) .login-button-show-password {
+    top: 36.3%;
 }
 
 .login-button-show-password {
@@ -62,15 +59,21 @@
     border: none !important;
     border-radius: 20px;
     position: absolute;
-    right: 13.5%;
-    top: 38.5%;
+    right: 13.7%;
+    top: 39.1%;
+    color: #b6b6b6;
+    transition: color 0.2s ease;
+}
+
+.login-button-show-password:disabled:hover {
+    background: transparent;
     color: #b6b6b6;
     transition: color 0.2s ease;
 }
 
 .login-button-show-password:hover {
     background: transparent;
-    color: #b6b6b6;
+    color: #ffffff;
     transition: color 0.2s ease;
 }
 
@@ -107,21 +110,21 @@
 }
 
 .login-socials button:nth-child(2) {
-    background-color:rgb(75, 84, 255);
+    background-color:rgb(128, 128, 128);
     transition: background-color 0.2s ease;
 }
 
 .login-socials button:nth-child(2):hover {
-    background-color:rgb(40, 48, 195);
+    background-color:rgb(68, 68, 68);
     transition: background-color 0.2s ease;
 }
 
 .login-socials button:nth-child(3) {
-    background-color:rgb(214, 210, 76);
+    background-color: #5865f2;
     transition: background-color 0.2s ease;
 }
 
 .login-socials button:nth-child(3):hover {
-    background-color:rgb(156, 152, 39);
+    background-color:#3542d0;
     transition: background-color 0.2s ease;
 }

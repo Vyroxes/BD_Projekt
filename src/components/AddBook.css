@@ -1,0 +1,90 @@
+.add-book-method-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+}
+
+.add-book-method-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.add-book-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 0 20px;
+}
+
+.add-book-cover {
+    margin-top: 15px;
+}
+
+.add-book-form input[type="file"] {
+    font-family: inherit;
+    padding: 0.4rem 0 0.45rem 1rem;
+}
+
+.add-book-form input[type="date"] {
+    font-family: inherit;
+    padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+}
+
+.add-book-row button {
+    margin-left: 20px;
+}
+
+.add-book-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.add-book-row-genres label {
+    white-space: nowrap;
+}
+
+.add-book-row-genres input {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.add-book-row input {
+    margin: 5px;
+    margin-right: 0px;
+    margin-left: 10px;
+    width: calc(100vw / 4);
+}
+
+.add-book-row textarea {
+    margin-top: 5px;
+    font-family: inherit;
+    font-size: small;
+    width: calc(100vw / 2);
+    min-width: calc(100vw / 2);
+    max-width: calc(100vw / 2);
+    max-height: 300px;
+}
+
+.add-book-row label {
+    margin-left: 10px;
+}
+
+.add-book-row a {
+    margin-right: 10px;
+}
+
+.add-book-buttons,
+.add-book-buttons2 {
+    margin-top: 18px;
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}

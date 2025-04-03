@@ -1,0 +1,38 @@
+.MuiSlider-thumb {
+    background-color: #6496FF;
+    border: 1px solid black;
+}
+
+.MuiSlider-thumb:hover {
+    background-color: #4F81FF;
+    border: 1px solid white;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.MuiSlider-rail {
+    background-color: #e0e0e0;
+}
+
+.MuiSlider-track {
+    background-color: #76a9ff;
+    transition: background-color 0.2s ease;
+}
+
+.MuiSlider-valueLabel {
+    font-size: 0.9em !important;
+  }
+
+@media (max-aspect-ratio: 9/10) {
+    .MuiSlider-thumb {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .MuiSlider-track {
+        height: 10px !important;
+    }
+
+    .MuiSlider-valueLabel {
+        font-size: 1.2em !important;
+      }
+}
