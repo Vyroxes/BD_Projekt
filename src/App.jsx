@@ -14,6 +14,8 @@ const EditBook = lazy(() => import('./components/EditBook'));
 const ReviewBook = lazy(() => import('./components/ReviewBook'));
 const Premium = lazy(() => import('./components/Premium'));
 const Contact = lazy(() => import('./components/Contact'));
+const Users = lazy(() => import('./components/Users'));
+const User = lazy(() => import('./components/User'));
 const Header = lazy(() => import('./components/Header'));
 const Footer = lazy(() => import('./components/Footer'));
 
@@ -55,6 +57,8 @@ const App = () => {
           <Route path="/wl-review-book/:id" element={authState ? <ReviewBook /> : <Navigate to="/login" />} />
           <Route path="/contact" element={authState ? <Contact /> : <Navigate to="/login" />} />
           <Route path="/premium" element={authState ? <Premium /> : <Navigate to="/login" />} />
+          <Route path="/users" element={authState ? <Users /> : <Navigate to="/login" />} />
+          <Route path="/users/:username" element={authState ? <User /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
         {location.pathname !== '/login' && location.pathname !== '/register' && (<Footer />)}

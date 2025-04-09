@@ -19,12 +19,9 @@ const BookDetails = () => {
     const checkBookID = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-book-details/")) {
-                response = await authAxios.get(`/api/bc-book-exists/${id}`);
-            } else if (location.pathname.startsWith("/wl-book-details/")) {
-                response = await authAxios.get(`/api/wl-book-exists/${id}`);
-            }
+            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -48,12 +45,9 @@ const BookDetails = () => {
     const fetchBook = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-book-details/")) {
-                response = await authAxios.get(`/api/bc-book-details/${id}`);
-            } else if (location.pathname.startsWith("/wl-book-details/")) {
-                response = await authAxios.get(`/api/wl-book-details/${id}`);
-            }
+            response = await authAxios.get(`/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
@@ -65,14 +59,20 @@ const BookDetails = () => {
     };
 
     const moveBook = async () => {
+        const confirmMove = window.confirm(
+            location.pathname.startsWith("/bc-book-details/")
+            ? "Czy na pewno chcesz przenieść tę książkę na listę życzeń?" 
+            : "Czy na pewno chcesz przenieść tę książkę do kolekcji?"
+        );
+        
+        if (!confirmMove) {
+            return;
+        }
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-book-details/")) {
-                response = await authAxios.post(`/api/move-book-to-wl/${id}`);
-            } else if (location.pathname.startsWith("/wl-book-details/")) {
-                response = await authAxios.post(`/api/move-book-to-bc/${id}`);
-            }
+            response = await authAxios.post(`/api/move-book-to/${type}/${id}`);
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-book-details/")) {
@@ -87,14 +87,21 @@ const BookDetails = () => {
     };
 
     const removeBook = async () => {
+        const confirmDelete = window.confirm(
+            location.pathname.startsWith("/bc-book-details/")
+            ? "Czy na pewno chcesz usunąć tę książkę z kolekcji?" 
+            : "Czy na pewno chcesz usunąć te książkę z listy życzeń?"
+        );
+        
+        if (!confirmDelete) {
+            return;
+        }
+
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-book-details/")) {
-                response = await authAxios.delete(`/api/bc-remove-book/${id}`);
-            } else if (location.pathname.startsWith("/wl-book-details/")) {
-                response = await authAxios.delete(`/api/wl-remove-book/${id}`);
-            }
+            response = await authAxios.delete(`/api/remove-book/${type}/${id}`);
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-book-details/")) {
@@ -114,28 +121,30 @@ const BookDetails = () => {
 
     return (
         <div className='book-details-container'>
-            <div className='book-details-cover'>
-                <img
-                    src={book.cover || "/unknown.jpg"}
-                    alt={book.title}
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/unknown.jpg";
-                    }}
-                    loading="lazy"
-                />
+            <div className='book-details'>
+                <div className='book-details-cover'>
+                    <img
+                        src={book.cover || "/unknown.jpg"}
+                        alt={book.title}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/unknown.jpg";
+                        }}
+                        loading="lazy"
+                    />
+                </div>
+                <div className='book-details-info'>
+                    <h1>{book.id}. {book.title}</h1>
+                    <h2>{book.author}</h2>
+                    <h3>Gatunki: {book.genres}</h3>
+                    <h3>Wydawnictwo: {book.publisher}</h3>
+                    <h3>Data wydania: {book.date}</h3>
+                    <h3>Liczba stron: {book.pages}</h3>
+                    <h3>ISBN: {book.isbn}</h3>
+                    <h3>Recenzja: {book.rate || "-"}/10 - {book.review || "brak recenzji"}</h3>
+                    <h4 className='book-details-info-desc'>Opis: {book.desc || "brak opisu"}</h4>
+                </div>
             </div>
-            <div className='book-details-info'>
-                <h1>{book.id}. {book.title}</h1>
-                <h2>{book.author}</h2>
-                <h3>Gatunki: {book.genres}</h3>
-                <h3>Wydawnictwo: {book.publisher}</h3>
-                <h3>Data wydania: {book.date}</h3>
-                <h3>Liczba stron: {book.pages}</h3>
-                <h3>ISBN: {book.isbn}</h3>
-                <h3>Recenzja: {book.rate || "-"}/10 - {book.review || "brak recenzji"}</h3>
-                <h4 className='book-details-info-desc'>Opis: {book.desc || "brak opisu"}</h4>
-            </div>  
             <div className='book-details-buttons'>
                 <button onClick={() => {
                     if (location.pathname.startsWith("/bc-book-details/")) {

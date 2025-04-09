@@ -61,6 +61,10 @@ const Login = ({ onLogin }) => {
         window.location.href = "/api/login/github";
     };
 
+    const handleDiscordLogin = () => {
+        window.location.href = "/api/login/discord";
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoginError('');
@@ -78,6 +82,7 @@ const Login = ({ onLogin }) => {
                             type="text"
                             id="usernameOrEmail"
                             name="usernameOrEmail"
+                            spellCheck="false"
                             required
                             minLength="5"
                             maxLength="320"
@@ -92,6 +97,7 @@ const Login = ({ onLogin }) => {
                             type={showPassword ? "text" : "password"}
                             id="password"
                             name="password"
+                            spellCheck="false"
                             required
                             minLength="8"
                             maxLength="20"
@@ -130,7 +136,7 @@ const Login = ({ onLogin }) => {
                     <div className="login-socials">
                         <label>Zaloguj się za pomocą</label>
                         <button type="button" onClick={handleGithubLogin}><FaGithub className="social-icon" /></button>
-                        <button type="button"><FaDiscord  className="social-icon" /></button>
+                        <button type="button" onClick={handleDiscordLogin}><FaDiscord  className="social-icon" /></button>
                     </div>
                     <div className="login-register">
                         <label>Nie masz konta?</label>

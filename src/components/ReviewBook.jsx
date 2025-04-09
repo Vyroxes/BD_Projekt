@@ -29,12 +29,9 @@ const ReviewBook = () => {
     const checkBookID = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-review-book/")) {
-                response = await authAxios.get(`/api/bc-book-exists/${id}`);
-            } else if (location.pathname.startsWith("/wl-review-book/")) {
-                response = await authAxios.get(`/api/wl-book-exists/${id}`);
-            }
+            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -50,7 +47,7 @@ const ReviewBook = () => {
                 navigate('/home');
             }
         } catch (error) {
-            console.error('Error checking book ID:', error);
+            console.error('Błąd podczas sprawdzania ID książki: ', error);
             navigate('/home');
         }
     };
@@ -58,37 +55,28 @@ const ReviewBook = () => {
     const fetchBook = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-review-book/")) {
-                response = await authAxios.get(`/api/bc-book-details/${id}`);
-            } else if (location.pathname.startsWith("/wl-review-book/")) {
-                response = await authAxios.get(`/api/wl-book-details/${id}`);
-            }
+            response = await authAxios.get(`/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
                 setLoading(false);
             }
         } catch (error) {
-            console.error('Error fetching book details:', error);
+            console.error('Błąd podczas pobierania danych książki: ', error);
         }
     };
 
     const deleteReview = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-review-book/")) {
-                response = await authAxios.post(`/api/bc-review-book/${id}`, {
-                    rate: null,
-                    review: null,
-                });
-            } else if (location.pathname.startsWith("/wl-review-book/")) {
-                response = await authAxios.post(`/api/wl-review-book/${id}`, {
-                    rate: null,
-                    review: null,
-                });
-            }
+            response = await authAxios.patch(`/api/review-book/${type}/${id}`, {
+                rate: null,
+                review: null,
+            });
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-review-book/")) {
@@ -98,25 +86,19 @@ const ReviewBook = () => {
                 }
             }
         } catch (error) {
-            console.error("Error deleting book review:", error);
+            console.error("Błąd podczas usuwania recenzji: ", error);
         }
     };
 
     const onSubmit = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-review-book/")) {
-                response = await authAxios.post(`/api/bc-review-book/${id}`, {
-                    rate,
-                    review,
-                });
-            } else if (location.pathname.startsWith("/wl-review-book/")) {
-                response = await authAxios.post(`/api/wl-review-book/${id}`, {
-                    rate,
-                    review,
-                });
-            }
+            response = await authAxios.patch(`/api/review-book/${type}/${id}`, {
+                rate,
+                review,
+            });
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-review-book/")) {
@@ -126,7 +108,7 @@ const ReviewBook = () => {
                 }
             }
         } catch (error) {
-            console.error("Error submitting book review:", error);
+            console.error("Błąd podczas aktualizowania recenzji: ", error);
         }
     };
 

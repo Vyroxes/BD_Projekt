@@ -38,66 +38,71 @@ const Contact = () => {
     return (
         <div className='contact-container'>
             <h1>Kontakt</h1>
-            <form onSubmit={handleSubmit}>
-                <div className='contact-row'>
-                    <label>
-                        Nazwa użytkownika
-                        <input
-                            type="text"
-                            id="username"
-                            name='username'
-                            required
-                            value={username}
-                            minLength="5"
-                            maxLength="20"
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <div className='contact-row'>
-                    <label>
-                        Email
-                        <input
-                            type="email"
-                            id="email"
-                            name='email'
-                            required
-                            value={email}
-                            minLength="6"
-                            maxLength="320"
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <div className='contact-row'>
-                    <label>
-                        Temat
-                        <input
-                            type="subject"
-                            id="subject"
-                            name='subject'
-                            required
-                            value={subject}
-                            minLength="1"
-                            maxLength="50"
-                            onChange={(e) => setSubject(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <a>Wiadomość</a>
-                <div className='contact-row'>
-                    <textarea
-                        id="text"
-                        name='text'
-                        value={text}
-                        required
-                        minLength="1"
-                        maxLength="500"
-                        onChange={(e) => setText(e.target.value)}
-                    />
-                </div>
-                <button type="submit">Wyślij wiadomość</button>
-            </form>
+            <div className='contact-container2'>
+                <form onSubmit={handleSubmit}>
+                    <div className='contact-row'>
+                        <label>
+                            Nazwa użytkownika
+                            <input
+                                type="text"
+                                id="username"
+                                name='username'
+                                required
+                                value={username}
+                                minLength="5"
+                                maxLength="20"
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                    <div className='contact-row'>
+                        <label>
+                            Email
+                            <input
+                                type="email"
+                                id="email"
+                                name='email'
+                                required
+                                value={email}
+                                minLength="6"
+                                maxLength="320"
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                    <div className='contact-row'>
+                        <label>
+                            Temat
+                            <input
+                                type="text"
+                                id="subject"
+                                name='subject'
+                                required
+                                value={subject}
+                                minLength="1"
+                                maxLength="50"
+                                onChange={(e) => setSubject(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                    <div className='contact-row'>
+                        <label>Wiadomość
+                            <textarea
+                                id="text"
+                                name='text'
+                                value={text}
+                                required
+                                minLength="1"
+                                maxLength="500"
+                                onChange={(e) => setText(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                    <div className='contact-button'>
+                        <button type="submit">Wyślij wiadomość</button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

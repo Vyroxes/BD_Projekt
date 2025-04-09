@@ -2,7 +2,7 @@ import React from "react";
 import { Slider } from "@mui/material";
 import "./DoubleRangeSlider.css";
 
-export default function DoubleRangeSlider({ initialBounds, filterCriteria, setFilterCriteria }) 
+export default function DoubleRangeSlider({ initialBounds, filterCriteria, setFilterCriteria, isDisabled }) 
 {
   const handleChange = (event, newValue) => 
   {
@@ -22,6 +22,7 @@ export default function DoubleRangeSlider({ initialBounds, filterCriteria, setFi
         max={initialBounds.maxPages}
         valueLabelDisplay="auto"
         disableSwap
+        disabled={isDisabled}
       />
     </div>
   )

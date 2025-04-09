@@ -45,7 +45,8 @@ const EditBook = () =>
         "literatura piękna",
         "przygoda",
         "sensacja",
-        "biografia i reportaż",
+        "biografia",
+        "reportaż",
         "popularnonaukowe",
     ];
 
@@ -78,12 +79,9 @@ const EditBook = () =>
         try 
         {
             let response;
+            const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-edit-book/")) {
-                response = await authAxios.get(`/api/bc-book-exists/${id}`);
-            } else if (location.pathname.startsWith("/wl-edit-book/")) {
-                response = await authAxios.get(`/api/wl-book-exists/${id}`);
-            }
+            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -109,12 +107,9 @@ const EditBook = () =>
         try 
         {
             let response;
+            const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-edit-book/")) {
-                response = await authAxios.get(`/api/bc-book-details/${id}`);
-            } else if (location.pathname.startsWith("/wl-edit-book/")) {
-                response = await authAxios.get(`/api/wl-book-details/${id}`);
-            }
+            response = await authAxios.get(`/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
@@ -154,32 +149,19 @@ const EditBook = () =>
     const onSubmit = async () => {
         try {
             let response;
+            const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/bc-edit-book/")) {
-                response = await authAxios.post(`/api/bc-edit-book/${id}`, {
-                    title,
-                    author,
-                    cover,
-                    genres,
-                    publisher,
-                    date,
-                    pages,
-                    isbn,
-                    desc,
-                });
-            } else if (location.pathname.startsWith("/wl-edit-book/")) {
-                response = await authAxios.post(`/api/wl-edit-book/${id}`, {
-                    title,
-                    author,
-                    cover,
-                    genres,
-                    publisher,
-                    date,
-                    pages,
-                    isbn,
-                    desc,
-                });
-            }
+            response = await authAxios.patch(`/api/edit-book/${type}/${id}`, {
+                title,
+                author,
+                cover,
+                genres,
+                publisher,
+                date,
+                pages,
+                isbn,
+                desc,
+            });
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-edit-book/")) {
@@ -225,7 +207,7 @@ const EditBook = () =>
         <div>
             <div className="add-book-container">
                 <div className="add-book-form">
-                    <h1>Dodaj książkę</h1>
+                    <h1>Edytuj książkę</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="add-book-row">
                             <label>

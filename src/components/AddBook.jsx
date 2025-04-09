@@ -11,6 +11,7 @@ const AddBook = () =>
     const [addBookMethod, setAddBookMethod] = useState("");
     const [showCover, setShowCover] = useState(false);
     const [checkedList, setCheckedList] = useState([]);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const [jsonFileContent, setJsonFileContent] = useState(null);
     const [isbn, setISBN] = useState("");
@@ -44,7 +45,8 @@ const AddBook = () =>
         "literatura piękna",
         "przygoda",
         "sensacja",
-        "biografia i reportaż",
+        "biografia",
+        "reportaż",
         "popularnonaukowe",
     ];
 
@@ -107,6 +109,8 @@ const AddBook = () =>
             return;
         }
 
+        setIsProcessing(true);
+
         try {
             const jsonData = JSON.parse(jsonFileContent);
             
@@ -125,6 +129,8 @@ const AddBook = () =>
                             pages: book.pages || "",
                             isbn: book.isbn || "",
                             desc: book.desc || "",
+                            rate: book.rate || "",
+                            review: book.review || "",
                         });
                     });
                 } else if (location.pathname === "/wl-add-book" && jsonData["wish-list"]) {
@@ -139,6 +145,8 @@ const AddBook = () =>
                             pages: book.pages || "",
                             isbn: book.isbn || "",
                             desc: book.desc || "",
+                            rate: book.rate || "",
+                            review: book.review || "",
                         });
                     });
                 }
@@ -156,6 +164,7 @@ const AddBook = () =>
                             }
                             else {
                                 bookCount--;
+                                console.error(`Błąd podczas dodawania książki "${book.title}."`);
                             }
                         } catch (error) {
                             console.error(`Błąd podczas dodawania książki "${book.title}": `, error);
@@ -168,7 +177,16 @@ const AddBook = () =>
                         } else if (location.pathname === "/wl-add-book") {
                             navigate('/wish-list');
                         }
-                    } else {
+                    } 
+                    else if (addedCount > 0) {
+                        alert(`Dodano ${addedCount} książek, ale wystąpiły błędy podczas dodawania pozostałych.`);
+                        if (location.pathname === "/bc-add-book") {
+                            navigate('/book-collection');
+                        } else if (location.pathname === "/wl-add-book") {
+                            navigate('/wish-list');
+                        }
+                    }
+                    else {
                         alert("Nie udało się dodać żadnej książki.");
                     }
                 } else {
@@ -180,6 +198,8 @@ const AddBook = () =>
         } catch (error) {
             console.error("Błąd podczas parsowania pliku JSON: ", error);
             alert("Nieprawidłowy format pliku JSON.");
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -233,55 +253,23 @@ const AddBook = () =>
     const onSubmit = async (book) => {
         try {
             let response;
+            const type = location.pathname === "/bc-add-book" ? "bc" : "wl";
 
-            if(location.pathname === "/bc-add-book")
-            {
-                if (book) {
-                    response = await authAxios.post("/api/bc-add-book", book, {
-                        withCredentials: true
-                    });
-                }
-                else {
-                    response = await authAxios.post("/api/bc-add-book", {
-                        title,
-                        author,
-                        cover,
-                        genres,
-                        publisher,
-                        date,
-                        pages,
-                        isbn,
-                        desc,
-                    }, 
-                    {
-                        withCredentials: true
-                    });
-                }
+            if (book) {
+                response = await authAxios.post(`/api/add-book/${type}`, book); 
             }
-            else if (location.pathname === "/wl-add-book")
-            {
-                if (book) {
-                    response = await authAxios.post("/api/wl-add-book", book, {
-                        withCredentials: true
-                    });
-                }
-                else {
-                    response = await authAxios.post("/api/wl-add-book", {
-                        title,
-                        author,
-                        cover,
-                        genres,
-                        publisher,
-                        date,
-                        pages,
-                        isbn,
-                        desc,
-                    }, 
-                    {
-                        withCredentials: true
-                    });
-                }
-                
+            else {
+                response = await authAxios.post(`/api/add-book/${type}`, {
+                    title,
+                    author,
+                    cover,
+                    genres,
+                    publisher,
+                    date,
+                    pages,
+                    isbn,
+                    desc,
+                });
             }
             
             if (response.status == 201)
@@ -298,8 +286,12 @@ const AddBook = () =>
                     }
                 }
             }
+            
+            return response;
+
         } catch (error) {
             console.error("Błąd podczas dodawania książki: ", error);
+            throw error;
         }
     };
 
@@ -372,13 +364,14 @@ const AddBook = () =>
                                                 id='file'
                                                 name='file'
                                                 accept="application/json"
+                                                disabled={isProcessing}
                                                 onChange={(e) => handleJsonFileSelect(e.target.files[0])}
                                             />
                                         </label>
                                     </div>
                                     <div className="add-book-buttons2">
-                                        <button type="button" onClick={processJsonFile}>Dodaj książkę</button>
-                                        <button type="button" onClick={() => {setAddBookMethod("")}}>
+                                        <button type="button" disabled={isProcessing} onClick={processJsonFile}>Dodaj książkę</button>
+                                        <button type="button" disabled={isProcessing} onClick={() => {setAddBookMethod("")}}>
                                             Anuluj
                                         </button>
                                     </div>
@@ -412,6 +405,7 @@ const AddBook = () =>
                                                 id="cover"
                                                 name='cover'
                                                 value={cover}
+                                                maxLength="500"
                                                 onChange={(e) => setCover(e.target.value)}
                                             />
                                         </label>
@@ -444,7 +438,7 @@ const AddBook = () =>
                                                 value={title}
                                                 onChange={(e) => setTitle(e.target.value)}
                                                 required
-                                                minLength="2"
+                                                minLength="1"
                                                 maxLength="100"
                                             />
                                         </label>
@@ -457,7 +451,7 @@ const AddBook = () =>
                                                 value={author}
                                                 onChange={(e) => setAuthor(e.target.value)}
                                                 required
-                                                minLength="5"
+                                                minLength="1"
                                                 maxLength="100"
                                             />
                                         </label>
@@ -488,7 +482,7 @@ const AddBook = () =>
                                                 value={publisher}
                                                 onChange={(e) => setPublisher(e.target.value)}
                                                 required
-                                                minLength="5"
+                                                minLength="1"
                                                 maxLength="100"
                                             />
                                         </label>

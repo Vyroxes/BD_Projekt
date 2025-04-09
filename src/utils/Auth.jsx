@@ -4,17 +4,19 @@ import { jwtDecode } from 'jwt-decode';
 const TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const USERNAME_KEY = 'username';
+const SESSION_KEY = 'session';
 
 export const setTokens = (accessToken, refreshToken, accessTokenExpire, refreshTokenExpire, username, email) => {
-    
     const accessTokenExpireDate = new Date();
-    const [hours, minutes, seconds] = accessTokenExpire.split(':').map(Number);
+    const [days, hours, minutes, seconds] = accessTokenExpire.split(':').map(Number);
+    accessTokenExpireDate.setDate(accessTokenExpireDate.getDate() + days);
     accessTokenExpireDate.setHours(accessTokenExpireDate.getHours() + hours);
     accessTokenExpireDate.setMinutes(accessTokenExpireDate.getMinutes() + minutes);
     accessTokenExpireDate.setSeconds(accessTokenExpireDate.getSeconds() + seconds);
 
     const refreshTokenExpireDate = new Date();
-    const [rHours, rMinutes, rSeconds] = refreshTokenExpire.split(':').map(Number);
+    const [rDays, rHours, rMinutes, rSeconds] = refreshTokenExpire.split(':').map(Number);
+    refreshTokenExpireDate.setDate(refreshTokenExpireDate.getDate() + rDays);
     refreshTokenExpireDate.setHours(refreshTokenExpireDate.getHours() + rHours);
     refreshTokenExpireDate.setMinutes(refreshTokenExpireDate.getMinutes() + rMinutes);
     refreshTokenExpireDate.setSeconds(refreshTokenExpireDate.getSeconds() + rSeconds);
@@ -34,9 +36,16 @@ export const getAccessToken = () => getCookie(TOKEN_KEY);
 export const getRefreshToken = () => getCookie(REFRESH_TOKEN_KEY);
 
 export const clearTokens = () => {
-    document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-    document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-    document.cookie = `${USERNAME_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    // document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    // document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    // document.cookie = `${USERNAME_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    // document.cookie = `${SESSION_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    const cookies = document.cookie.split(";");
+
+    cookies.forEach((cookie) => {
+        const cookieName = cookie.split("=")[0].trim();
+        document.cookie = `${cookieName}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    });
 };
 
 export const isAuthenticated = async () => {

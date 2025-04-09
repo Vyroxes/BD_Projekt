@@ -1,7 +1,45 @@
 {
   "book-collection": [
     {
-      "id": "1",
+      "isbn": "9788328707505",
+      "title": "Mały Książę",
+      "author": "Antoine de Saint-Exupéry",
+      "cover": "https://cdn.znak.com.pl/cdn-cgi/image/format=webp,quality=75/images/product/maly-ksiaze-172531",
+      "publisher": "Rebis",
+      "date": "2015-04-15",
+      "pages": "96",
+      "desc": "Klasyczna opowieść o miłości, przyjaźni i dorastaniu widziana oczami małego chłopca.",
+      "genres": "dla dzieci, lektura",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788328713070",
+      "title": "Echo z otchłani",
+      "author": "Remigiusz Mróz",
+      "cover": "https://s.lubimyczytac.pl/upload/books/4912000/4912633/789386-352x500.jpg",
+      "publisher": "Czwarta Strona",
+      "date": "2020-01-15",
+      "pages": "560",
+      "desc": "Kontynuacja 'Chóru zapomnianych głosów'. Opowieść o wyprawie w nieznane i walce z niewyjaśnionym.",
+      "genres": "science-fiction, thriller",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788379760205",
+      "title": "Chór zapomnianych głosów",
+      "author": "Remigiusz Mróz",
+      "cover": "https://s.lubimyczytac.pl/upload/books/4906000/4906966/773597-352x500.jpg",
+      "publisher": "Czwarta Strona",
+      "date": "2014-10-22",
+      "pages": "512",
+      "desc": "Thriller science-fiction opowiadający o załodze statku kosmicznego, która budzi się z hibernacji i odkrywa zagładę reszty załogi.",
+      "genres": "science-fiction, thriller",
+      "rate": "",
+      "review": ""
+    },
+    {
       "title": "Metro 2033",
       "author": "Dmitry Glukhovsky",
       "cover": "https://ecsmedia.pl/c/metro-2033-b-iext180591670.jpg",
@@ -15,7 +53,58 @@
       "desc": "Czy kiedykolwiek przyszło ci do głowy, że ostatni epizod historii cywilizacji człowieka rozegra się w przejmującej atmosferze moskiewskiego metra? Czy człowiek, który w marzeniach sięgał gwiazd, godzien jest skończyć jak szczur, sto metrów pod ziemią? Mało prawdopodobne? Po przeczytaniu „Metra 2033” – rosyjskiego, kultowego już bestsellera, który zawładnął wyobraźnią ponad dwuipółmilionowej rzeszy czytelników – na pewno zmienisz zdanie. Ten thriller SF, którego wartka akcja i niezwykle sugestywnie przedstawiony świat nie pozwolą ci się od niego oderwać aż do ostatniej strony, to nie tylko wspaniała rozrywka i uczta dla czytelnika. To także portret człowieka u schyłku cywilizacji; przejmująca analiza jego niezmiennej natury. To cover świata po końcu świata. Rok 2033. W wyniku konfliktu atomowego świat uległ zagładzie. Ocaleli tylko nieliczni, chroniący się w moskiewskim metrze, które dzięki unikalnej konstrukcji stało się najprawdopodobniej ostatnim przyczółkiem ludzkości. Na mrocznych stacjach, rozświetlanych światłami awaryjnymi i blaskiem ognisk, ludzie ci próbują wieść życie zbliżone do tego sprzed katastrofy. Tworzą mikropaństwa spajane ideologią, religią czy po prostu ochroną filtrów wodnych... Zawierają sojusze, toczą wojny. WOGN to wysunięta najbardziej na północ zamieszkała stacja metra. Kiedyś była jedną z najpiękniejszych, a po zagładzie przez długi czas pozostawała bezpieczna. Teraz pojawiło się na niej śmiertelne niebezpieczeństwo. Artem, młody mężczyzna z WOGN-u, otrzymuje zadanie: musi przedostać się do legendarnej stacji Polis, serca moskiewskiego metra, aby przekazać ostrzeżenie o nowym niebezpieczeństwie. Od powodzenia jego misji zależy przyszłość nie tylko peryferyjnej stacji, ale być może całej ocalałej w metrze ludzkości."
     },
     {
-      "id": "2",
+      "isbn": "9788365521551",
+      "title": "Metro 2034",
+      "author": "Dmitrij Głuchowski",
+      "cover": "https://ecsmedia.pl/c/uniwersum-metro-2033-metro-2034-b-iext161072025.jpg",
+      "publisher": "Insignis",
+      "date": "2017-05-25",
+      "pages": "448",
+      "desc": "Kontynuacja bestsellerowego 'Metro 2033'. Losy ludzi żyjących w postapokaliptycznym moskiewskim metrze.",
+      "genres": "science-fiction, postapokalipsa",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788366067249",
+      "title": "Metro 2035",
+      "author": "Dmitrij Głuchowski",
+      "cover": "https://ecsmedia.pl/c/metro-2035-uniwersum-metro-2033-tom-3-b-iext179940776.jpg",
+      "publisher": "Insignis",
+      "date": "2019-11-13",
+      "pages": "464",
+      "desc": "Ostatnia część trylogii Metro. Artem stara się znaleźć odpowiedzi na pytania o prawdziwy stan świata poza metrem.",
+      "genres": "science-fiction, postapokalipsa",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788365066717",
+      "title": "Bleach – tom 1",
+      "author": "Tite Kubo",
+      "cover": "https://mangarden.pl/hpeciai/fba9e590a46654cd00a974ab04244349/pol_pl_Bleach-tom-01-9856_1.jpg",
+      "publisher": "J.P. Fantastica",
+      "date": "2002-08-07",
+      "pages": "192",
+      "desc": "Pierwszy tom popularnej mangi o chłopaku, który zostaje shinigami i broni ludzi przed złymi duchami.",
+      "genres": "manga, przygoda, fantasy",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788364928122",
+      "title": "One Piece – tom 1",
+      "author": "Eiichiro Oda",
+      "cover": "https://mangarden.pl/hpeciai/01b81e1ca2715059160a98b48db0ebe1/pol_pl_One-Piece-tom-01-10285_1.jpg",
+      "publisher": "J.P. Fantastica",
+      "date": "1997-07-22",
+      "pages": "208",
+      "desc": "Pierwszy tom mangi opowiadającej o przygodach Luffy'ego, który chce zostać Królem Piratów.",
+      "genres": "manga, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
       "isbn": "9798344290973",
       "title": "Pan i Wladca Wszechświata Jezus Chrystus",
       "author": "Jezus Chrystus",
@@ -29,11 +118,10 @@
       "review": ""
     },
     {
-      "id": "3",
       "isbn": "9781338878929",
       "title": "Harry Potter i Kamień Filozoficzny",
       "author": "J. K. Rowling",
-      "cover": "https://ecsmedia.pl/c/harry-potter-i-kamien-filozoficzny-b-iext170105489.jpg",
+      "cover": "https://s.lubimyczytac.pl/upload/books/5185000/5185193/1263178-352x500.jpg",
       "publisher": "Media Rodzina",
       "date": "2024-12-31",
       "pages": "320",
@@ -43,7 +131,6 @@
       "review": ""
     },
     {
-      "id": "4",
       "isbn": "9788381884105",
       "title": "Diuna",
       "author": "Frank Herbert",
@@ -57,25 +144,205 @@
       "review": ""
     },
     {
-      "id": "5",
       "isbn": "9788375780635",
       "title": "Wiedźmin. Ostatnie Życzenie. Tom 1",
       "author": "Andrzej Sapkowski",
       "cover": "https://s.lubimyczytac.pl/upload/books/240000/240310/1114358-352x500.jpg",
       "publisher": "superNOWA",
       "date": "2014-09-25",
-      "pages": 332,
-      "desc": "Później mówiono, że człowiek ów nadszedł od północy, od Bramy Powroźniczej. Nie był stary, ale włosy miał zupełnie białe. Kiedy ściągnął płaszcz, okazało się, że na pasie za plecami ma miecz.\nBiałowłosego przywiodło do miasta królewskie orędzie: trzy tysiące orenów nagrody za odczarowanie nękającej mieszkańców Wyzimy strzygi.\nTakie czasy nastały. Dawniej po lasach jeno wilki wyły, teraz namnożyło się rozmaitego paskudztwa – gdzie spojrzysz, tam upiory, bazyliszki, diaboły, żywiołaki, wiły i utopce plugawe. A i niebacznie uwolniony z amfory dżinn, potrafiący zamienić życie spokojnego miasta w koszmar, się trafi.\nTu nie wystarczą zwykłe czary ani osinowe kołki. Tu trzeba zawodowca.\nWIEDŹMINA.\nMistrza magii i miecza. Tajemną sztuką wyuczonego, by strzec na świecie moralnej i biologicznej równowagi.",
+      "pages": "332",
+      "desc": "Później mówiono, że człowiek ów nadszedł od północy, od Bramy Powroźniczej. Nie był stary, ale włosy miał zupełnie białe...",
       "genres": "fantasy, przygoda, sensacja",
       "rate": "",
       "review": ""
     },
     {
-      "id": "6",
+      "isbn": "9788375780642",
+      "title": "Wiedźmin. Miecz Przeznaczenia. Tom 2",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://image.ceneostatic.pl/data/products/32692743/i-miecz-przeznaczenia-wiedzmin-tom-2.jpg",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "400",
+      "desc": "Geralt nie wierzy w przeznaczenie. Ale przeznaczenie wierzy w Geralta. I nie pozwala mu uciec...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780659",
+      "title": "Wiedźmin. Krew Elfów. Tom 3",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://cdn.swiatksiazki.pl/media/catalog/product/3/8/3899905444438.jpg?width=650&height=650&store=default&image-type=small_image",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "432",
+      "desc": "Ciri, królewna z Cintry, trafiła pod opiekę wiedźmina Geralta. Nie wie jeszcze, że jest dzieckiem przeznaczenia...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780666",
+      "title": "Wiedźmin. Czas Pogardy. Tom 4",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://ecsmedia.pl/c/czas-pogardy-wiedzmin-tom-4-b-iext177055986.jpg",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "384",
+      "desc": "Ciri trafia w sam środek wojny, której wynik może odmienić losy świata. Geralt staje przed największym wyzwaniem...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780673",
+      "title": "Wiedźmin. Chrzest Ognia. Tom 5",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://ecsmedia.pl/c/chrzest-ognia-wiedzmin-tom-5-b-iext177075504.jpg",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "384",
+      "desc": "Geralt wyrusza w niebezpieczną podróż, by odnaleźć Ciri. Po drodze dołącza do niego niespodziewana kompania...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780680",
+      "title": "Wiedźmin. Wieża Jaskółki. Tom 6",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://ecsmedia.pl/c/wieza-jaskolki-wiedzmin-tom-6-b-iext179927803.jpg",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "400",
+      "desc": "Ciri, ranna i ścigana, odnajduje schronienie w tytułowej Wieży Jaskółki. Tymczasem Geralt podąża jej śladem...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780697",
+      "title": "Wiedźmin. Pani Jeziora. Tom 7",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://cdn.swiatksiazki.pl/media/catalog/product/4/1/4199905444441.jpg?width=650&height=650&store=default&image-type=small_image",
+      "publisher": "superNOWA",
+      "date": "2014-09-25",
+      "pages": "520",
+      "desc": "Ostatnia część sagi. Ciri dociera do miejsca, które wydaje się być legendą. Geralt zmierza ku swojemu przeznaczeniu...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780703",
+      "title": "Wiedźmin. Sezon Burz",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://ecsmedia.pl/c/sezon-burz-wiedzmin-tom-8-b-iext171289237.jpg",
+      "publisher": "superNOWA",
+      "date": "2013-11-06",
+      "pages": "404",
+      "desc": "Choć Sezon Burz nie jest częścią głównej sagi, wprowadza nas w nieznane przygody Geralta. Wiedźmin mierzy się z politycznymi intrygami...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375780710",
+      "title": "Wiedźmin. Rozdroże Kruków",
+      "author": "Andrzej Sapkowski",
+      "cover": "https://files.legimi.com/images/e7ddaeee96f729090bed47a3376a11b0/w512_u90.jpg",
+      "publisher": "superNOWA",
+      "date": "2024-11-29",
+      "pages": "450",
+      "desc": "Geralt z Rivii powraca w nowej opowieści, która rzuca światło na nieznane dotąd wydarzenia z jego przeszłości. Wiedźmin staje w obliczu nowych zagrożeń i moralnych dylematów, a los ponownie splata jego ścieżki z magami, władcami i potworami. Jaką rolę odegrają w tym wszystkim tajemnicze kruki? Odpowiedź kryje się na rozdrożach przeznaczenia...",
+      "genres": "fantasy, przygoda, sensacja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788308067004",
+      "title": "Ludowa historia Polski",
+      "author": "Adam Leszczyński",
+      "cover": "https://s.lubimyczytac.pl/upload/books/4939000/4939197/847971-352x500.jpg",
+      "publisher": "W.A.B.",
+      "date": "2020-10-21",
+      "pages": "640",
+      "desc": "Historia Polski opowiedziana z perspektywy chłopów, robotników i innych warstw ludowych, które przez wieki stanowiły większość społeczeństwa.",
+      "genres": "historia",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788324077204",
+      "title": "Shantaram",
+      "author": "Gregory David Roberts",
+      "cover": "https://s.lubimyczytac.pl/upload/books/5021000/5021300/991748-352x500.jpg",
+      "publisher": "Zysk i S-ka",
+      "date": "2021-06-15",
+      "pages": "800",
+      "desc": "Powieść oparta na prawdziwych wydarzeniach, opowiadająca historię uciekiniera z australijskiego więzienia, który trafia do Bombaju i wikła się w świat przestępczości.",
+      "genres": "beletrystyka",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788308054714",
+      "title": "Poezje zebrane",
+      "author": "Wisława Szymborska",
+      "cover": "https://ecsmedia.pl/c/poezje-zebrane-b-iext180905819.jpg",
+      "publisher": "Znak",
+      "date": "2017-02-01",
+      "pages": "544",
+      "desc": "Zbiór poezji Wisławy Szymborskiej, jednej z najwybitniejszych polskich poetek, laureatki Nagrody Nobla.",
+      "genres": "poezja",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788375369601",
+      "title": "Mistrz i Małgorzata",
+      "author": "Michaił Bułhakow",
+      "cover": "https://s.lubimyczytac.pl/upload/books/5166000/5166174/1225756-352x500.jpg",
+      "publisher": "Muza",
+      "date": "2015-09-16",
+      "pages": "512",
+      "desc": "Klasyczna powieść literatury światowej, opowiadająca historię szatana odwiedzającego Moskwę lat 30. XX wieku.",
+      "genres": "literatura piękna",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788324059484",
+      "title": "Steve Jobs",
+      "author": "Walter Isaacson",
+      "cover": "https://ecsmedia.pl/c/steve-jobs-b-iext176465644.jpg",
+      "publisher": "Insignis",
+      "date": "2011-11-21",
+      "pages": "656",
+      "desc": "Oficjalna biografia Steve’a Jobsa, założyciela Apple, oparta na rozmowach z nim oraz jego współpracownikami i rodziną.",
+      "genres": "biografia",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9788326829498",
+      "title": "Ludzie. Krótka historia o tym, jak spieprzyliśmy wszystko",
+      "author": "Tom Phillips",
+      "cover": "https://s.lubimyczytac.pl/upload/books/4880000/4880027/805935-352x500.jpg",
+      "publisher": "Albatros",
+      "date": "2019-04-24",
+      "pages": "304",
+      "desc": "Pełna humoru książka przedstawiająca największe ludzkie błędy w historii, które miały katastrofalne skutki.",
+      "genres": "reportaż, popularnonaukowe",
+      "rate": "",
+      "review": ""
+    },
+    {
       "isbn": "9788382349504",
       "title": "Hyperion",
       "author": "Dan Simmons",
-      "cover": "https://ecsmedia.pl/c/harry-potter-i-kamien-filozoficzny-b-iext177039383.jpg",
+      "cover": "https://s.lubimyczytac.pl/upload/books/231000/231216/1135772-352x500.jpg",
       "publisher": "Mag",
       "date": "2015-09-01",
       "pages": "592",
@@ -85,7 +352,6 @@
       "review": ""
     },
     {
-      "id": "7",
       "isbn": "9788381165587",
       "title": "Z mgły zrodzony",
       "author": "Brandon Sanderson",
@@ -99,7 +365,6 @@
       "review": ""
     },
     {
-      "id": "8",
       "isbn": "9788383523002",
       "title": "Gra Endera",
       "author": "Orson Scott Card",
@@ -113,7 +378,6 @@
       "review": ""
     },
     {
-      "id": "9",
       "isbn": "9781781103484",
       "title": "Hobbit, czyli tam i z powrotem",
       "author": "J.R.R. Tolkien",
@@ -127,7 +391,6 @@
       "review": ""
     },
     {
-      "id": "10",
       "isbn": "9788376483672",
       "title": "Opowieści z Narnii: Lew, czarownica i stara szafa",
       "author": "C.S. Lewis",
@@ -141,7 +404,6 @@
       "review": ""
     },
     {
-      "id": "11",
       "isbn": "9788324597227",
       "title": "Lód",
       "author": "Jacek Dukaj",
@@ -155,7 +417,6 @@
       "review": ""
     },
     {
-      "id": "12",
       "isbn": "9788376231952",
       "title": "Trylogia Czarnego Maga: Gildia Magów",
       "author": "Trudi Canavan",
@@ -169,7 +430,6 @@
       "review": ""
     },
     {
-      "id": "13",
       "isbn": "9788380625976",
       "title": "Człowiek z Wysokiego Zamku",
       "author": "Philip K. Dick",
@@ -181,11 +441,21 @@
       "genres": "science-fiction",
       "rate": "",
       "review": ""
-    }
-  ],
-  "wish-list": [
+    },
     {
-      "id": "1",
+      "isbn": "9780755382274",
+      "title": "Assassin's Creed Tajemna Krucjata",
+      "author": "Oliver Bowden",
+      "cover": "https://s.lubimyczytac.pl/upload/books/133000/133511/352x500.jpg",
+      "publisher": "Insignis",
+      "date": "2012-04-18",
+      "pages": "512",
+      "desc": "Historia Altaira, legendarnego asasyna, którego misja miała decydujące znaczenie dla losów Bractwa...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
       "isbn": "9780141046303",
       "title": "Assassin's Creed Renesans",
       "author": "Oliver Bowden",
@@ -199,7 +469,84 @@
       "review": ""
     },
     {
-      "id": "2",
+      "isbn": "9780755379809",
+      "title": "Assassin's Creed Bractwo",
+      "author": "Oliver Bowden",
+      "cover": "https://s.lubimyczytac.pl/upload/books/102000/102831/352x500.jpg",
+      "publisher": "Insignis",
+      "date": "2011-11-09",
+      "pages": "496",
+      "desc": "Ezio Auditiore, mistrz asasynów, staje przed kolejnym wyzwaniem – odzyskać kontrolę nad Rzymem, który znalazł się pod panowaniem rodu Borgiów...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9780755382304",
+      "title": "Assassin's Creed Objawienia",
+      "author": "Oliver Bowden",
+      "cover": "https://s.lubimyczytac.pl/upload/books/153000/153097/352x500.jpg",
+      "publisher": "Insignis",
+      "date": "2012-11-07",
+      "pages": "496",
+      "desc": "Ezio wyrusza w podróż śladami Altaira, aby odkryć sekrety skrywane w zakonie asasynów...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9780425261515",
+      "title": "Assassin's Creed Porzuceni",
+      "author": "Oliver Bowden",
+      "cover": "https://s.lubimyczytac.pl/upload/books/160000/160583/144048-352x500.jpg",
+      "publisher": "Insignis",
+      "date": "2013-04-17",
+      "pages": "512",
+      "desc": "Historia Connora, bohatera walk o wolność Ameryki, opowiedziana z perspektywy jego ojca, Haythama Kenwaya...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9780425261720",
+      "title": "Assassin's Creed Czarna Bandera",
+      "author": "Oliver Bowden",
+      "cover": "https://a.allegroimg.com/s512/114de1/6ffedaf243c9ac3367a37957e071/Assassin-s-Creed-Czarna-Bandera-Oliver-Bowden",
+      "publisher": "Insignis",
+      "date": "2014-04-23",
+      "pages": "480",
+      "desc": "Młody Edward Kenway wplątuje się w konflikt między asasynami a templariuszami, podczas gdy poszukuje własnej drogi w świecie piratów...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9781405918860",
+      "title": "Assassin's Creed Pojednanie",
+      "author": "Oliver Bowden",
+      "cover": "https://ecsmedia.pl/c/pojednanie-assassin-s-creed-tom-7-b-iext167035813.jpg",
+      "publisher": "Insignis",
+      "date": "2014-11-05",
+      "pages": "480",
+      "desc": "Arno Dorian wkracza w brutalny świat francuskiej rewolucji, gdzie jedynie asasyni mogą powstrzymać chaos...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
+      "isbn": "9781405918846",
+      "title": "Assassin's Creed Podziemie",
+      "author": "Oliver Bowden",
+      "cover": "https://s.lubimyczytac.pl/upload/books/260000/260106/465796-352x500.jpg",
+      "publisher": "Insignis",
+      "date": "2015-11-04",
+      "pages": "480",
+      "desc": "Henry Green, mentor asasynów w Londynie, staje do walki przeciwko templariuszom w erze rewolucji przemysłowej...",
+      "genres": "fantasy, sensacja, na podstawie gry, przygoda",
+      "rate": "",
+      "review": ""
+    },
+    {
       "isbn": "9788377312633",
       "title": "To",
       "author": "Stephen King",
@@ -213,7 +560,6 @@
       "review": ""
     },
     {
-      "id": "3",
       "isbn": "9788324031581",
       "title": "Zanim się pojawiłeś",
       "author": "Jojo Moyes",
@@ -227,7 +573,6 @@
       "review": ""
     },
     {
-      "id": "4",
       "isbn": "9788328707925",
       "title": "Dziewczyna z pociągu",
       "author": "Paula Hawkins",
@@ -241,7 +586,6 @@
       "review": ""
     },
     {
-      "id": "5",
       "isbn": "9788375798651",
       "title": "Potęga podświadomości",
       "author": "Joseph Murphy",
@@ -255,21 +599,6 @@
       "review": ""
     },
     {
-      "id": "6",
-      "isbn": "9788328707505",
-      "title": "Mały Książę",
-      "author": "Antoine de Saint-Exupéry",
-      "cover": "https://cdn.znak.com.pl/cdn-cgi/image/format=webp,quality=75/images/product/maly-ksiaze-172531",
-      "publisher": "Rebis",
-      "date": "2015-04-15",
-      "pages": "96",
-      "desc": "Klasyczna opowieść o miłości, przyjaźni i dorastaniu widziana oczami małego chłopca.",
-      "genres": "dla dzieci, lektura",
-      "rate": "",
-      "review": ""
-    },
-	{
-      "id": "7",
       "isbn": "9788379991655",
       "title": "Pięćdziesiąt twarzy Greya",
       "author": "E. L. James",
@@ -283,7 +612,6 @@
       "review": ""
     },
     {
-      "id": "8",
       "isbn": "9788323755028",
       "title": "Batman: Rok Pierwszy",
       "author": "Frank Miller",
@@ -297,7 +625,6 @@
       "review": ""
     },
     {
-      "id": "9",
       "isbn": "9788381164463",
       "title": "Naruto: Tom 1",
       "author": "Masashi Kishimoto",
@@ -310,5 +637,6 @@
       "rate": "",
       "review": ""
     }
-  ]
+  ],
+  "wish-list": []
 }

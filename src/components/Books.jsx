@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import DoubleRangeSlider from "./DoubleRangeSlider";
 import { IoMdClose } from "react-icons/io";
-import { authAxios } from '../utils/Auth';
+import { authAxios, getCookie } from '../utils/Auth';
 
 import './Books.css';
 
@@ -10,14 +10,13 @@ const Books = () =>
 {
     const navigate = useNavigate();
     const location = useLocation();
+    const username = getCookie("username");
     
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [sortMethod, setSortMethod] = useState("idAsc");
     const [filterVisible, setFilterVisible] = useState(false);
-
-    const isDisabled = search.trim() === "";
 
     const [filterCriteria, setFilterCriteria] = useState({
         genres: {},
@@ -56,7 +55,8 @@ const Books = () =>
         "literatura piękna",
         "przygoda",
         "sensacja",
-        "biografia i reportaż",
+        "biografia",
+        "reportaż",
         "popularnonaukowe",
     ];
 
@@ -93,15 +93,9 @@ const Books = () =>
         try 
         {
             let response;
+            const type = location.pathname.startsWith("/book-collection") ? "bc" : "wl";
 
-            if(location.pathname === "/book-collection")
-            {
-                response = await authAxios.get('/api/book-collection');
-            }
-            else if(location.pathname === "/wish-list")
-            {
-                response = await authAxios.get('/api/wish-list');
-            }
+            response = await authAxios.get(`/api/${username}/${type}`);
 
             if (response.status == 200) {
                 setBooks(response.data);
@@ -189,15 +183,25 @@ const Books = () =>
         }
     });
 
+    const isSearchButtonDisabled = search.trim() === "" || books.length === 0;
+    const isDisabled = books.length === 0 || filteredBooks.length === 0;
+
     const removeAllBooks = async () => {
+        const confirmDelete = window.confirm(
+            location.pathname === "/book-collection" 
+            ? "Czy na pewno chcesz usunąć wszystkie książki z kolekcji?" 
+            : "Czy na pewno chcesz usunąć wszystkie książki z listy życzeń?"
+        );
+        
+        if (!confirmDelete) {
+            return;
+        }
+
         try {
             let response;
+            const type = location.pathname.startsWith("/book-collection") ? "bc" : "wl";
 
-            if (location.pathname.startsWith("/book-collection")) {
-                response = await authAxios.delete(`/api/bc-remove-all-books`);
-            } else if (location.pathname.startsWith("/wish-list")) {
-                response = await authAxios.delete(`/api/wl-remove-all-books`);
-            }
+            response = await authAxios.delete(`/api/remove-all-books/${type}`);
 
             if (response.status === 200) {
                 fetchBooks();
@@ -206,6 +210,8 @@ const Books = () =>
             console.error('Błąd podczas usuwania książki: ', error);
         }
     };
+
+    const isDisabledResetButton = Object.keys(filterCriteria.genres).length === 0 && initialBounds.minPages === filterCriteria.minPages && initialBounds.maxPages === filterCriteria.maxPages && initialBounds.minYear === filterCriteria.minYear && initialBounds.maxYear === filterCriteria.maxYear;
 
     if(loading) {
         return;
@@ -217,7 +223,7 @@ const Books = () =>
             <div className='book-collection-bar-container1'>
                 </div>
                 <div className='book-collection-bar-container2'>
-                    <button onClick={handleSortClick}>
+                    <button disabled={isDisabled} onClick={handleSortClick}>
                         Sortuj ({sortLabels[sortMethod]})
                     </button>
                 </div>
@@ -227,6 +233,7 @@ const Books = () =>
                         id="search"
                         name="search"
                         placeholder="Tytuł lub autor książki"
+                        disabled={books.length === 0}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -234,7 +241,7 @@ const Books = () =>
                         <button
                             className="book-collection-search-button"
                             type="button"
-                            disabled={isDisabled}
+                            disabled={isSearchButtonDisabled}
                             onClick={() => setSearch("")}
                         >
                             <IoMdClose/>
@@ -242,10 +249,10 @@ const Books = () =>
                     </div>
                 </div>
                 <div className='book-collection-bar-container4'>
-                    <button onClick={() => setFilterVisible((prevState) => !prevState)}>
+                    <button disabled={books.length === 0} onClick={() => setFilterVisible((prevState) => !prevState)}>
                         Filtruj
                     </button>
-                    <button onClick={() => removeAllBooks()}>Usuń wszystko</button>
+                    <button disabled={books.length === 0} onClick={() => removeAllBooks()}>Usuń wszystko</button>
                 </div>
                 <div className='book-collection-bar-container5'>
                     <button onClick={() => {
@@ -268,15 +275,21 @@ const Books = () =>
                         <input
                             type="checkbox"
                             checked={filterCriteria.genres[genre] || false}
-                            onChange={(e) =>
-                            setFilterCriteria({
+                            disabled={books.length === 0}
+                            onChange={(e) => {
+                                const updatedGenres = { ...filterCriteria.genres };
+    
+                                if (e.target.checked) {
+                                updatedGenres[genre] = true;
+                                } else {
+                                delete updatedGenres[genre];
+                                }
+                                
+                                setFilterCriteria({
                                 ...filterCriteria,
-                                genres: {
-                                ...filterCriteria.genres,
-                                [genre]: e.target.checked,
-                                },
-                            })
-                            }
+                                genres: updatedGenres
+                                });
+                            }}
                         />
                         {genre}
                         </label>
@@ -288,6 +301,7 @@ const Books = () =>
                         initialBounds={initialBounds}
                         filterCriteria={filterCriteria}
                         setFilterCriteria={setFilterCriteria}
+                        isDisabled={books.length === 0}
                     />
                     </div>
                 <div className="book-collection-filter-controls">
@@ -302,37 +316,42 @@ const Books = () =>
                             maxYear: newValues.maxPages
                         })
                         }
+                        isDisabled={books.length === 0}
                     />
                 </div>
                 <div className="book-collection-filter-button">
-                    <button onClick={() => setFilterCriteria(initialBounds)}>Resetuj</button>
+                    <button disabled={isDisabledResetButton} onClick={() => setFilterCriteria(initialBounds)}>
+                            Resetuj
+                    </button>
                 </div>
             </div>
             )}
             <div className='book-collection-container'>
                 {filteredBooks.length > 0 ? (
-                    filteredBooks.map(book => (
-                        <div key={book.id} className="book-card" onClick={() => {
-                                if(location.pathname === "/book-collection")
-                                {
-                                    navigate(`/bc-book-details/${book.id}`);
-                                }
-                                else if(location.pathname === "/wish-list")
-                                {
-                                    navigate(`/wl-book-details/${book.id}`);
-                                }
-                            }}>
-                            <img
-                                src={book.cover || "/unknown.jpg"}
-                                alt={book.title}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = "/unknown.jpg";
-                                }}
-                                loading="lazy"
-                            />
-                            <p className="book-card-title">{book.id}. {book.title}</p>
-                            <p className="book-card-author">{book.author}</p>
+                    filteredBooks.map((book, index) => (
+                        <div className='book-card-container' style={{"--card-index": index}}>
+                            <div key={book.id} className="book-card" onClick={() => {
+                                    if(location.pathname === "/book-collection")
+                                    {
+                                        navigate(`/bc-book-details/${book.id}`);
+                                    }
+                                    else if(location.pathname === "/wish-list")
+                                    {
+                                        navigate(`/wl-book-details/${book.id}`);
+                                    }
+                                }}>
+                                <img
+                                    src={book.cover || "/unknown.jpg"}
+                                    alt={book.title}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/unknown.jpg";
+                                    }}
+                                    loading="lazy"
+                                />
+                                <p className="book-card-title">{book.id}. {book.title}</p>
+                                <p className="book-card-author">{book.author}</p>
+                            </div>
                         </div>
                     ))
                 ) : (
