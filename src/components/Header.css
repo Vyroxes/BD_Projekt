@@ -96,10 +96,11 @@
     transform: rotate(180deg);
 }
 
-@media (max-width: 1220px) {
+@media (max-width: 1244px) {
     .nav {
         flex-direction: column;
         height: auto;
+        padding: 0;
     }
 
     .nav li {
@@ -109,10 +110,6 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .nav li:after {
-        display: none;
-    }
-
     .nav a {
         padding: 0.5rem;
     }
@@ -120,5 +117,9 @@
     .avatar {
         width: 28px;
         height: 28px;
+    }
+
+    .logout-icon {
+        font-size: xx-large;
     }
 }

@@ -36,10 +36,6 @@ export const getAccessToken = () => getCookie(TOKEN_KEY);
 export const getRefreshToken = () => getCookie(REFRESH_TOKEN_KEY);
 
 export const clearTokens = () => {
-    // document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-    // document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-    // document.cookie = `${USERNAME_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-    // document.cookie = `${SESSION_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
     const cookies = document.cookie.split(";");
 
     cookies.forEach((cookie) => {
@@ -54,6 +50,7 @@ export const isAuthenticated = async () => {
     if (!accessToken) {
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
+            clearTokens();
             return false;
         }
 
@@ -62,6 +59,7 @@ export const isAuthenticated = async () => {
             return true;
         } catch (error) {
             console.error('Błąd podczas odświeżania tokenu: ', error);
+            clearTokens();
             return false;
         }
     }
@@ -92,12 +90,12 @@ export const refreshAccessToken = async () => {
     }
 };
 
-export const getAccessTokenExpireDate = () => {
-    const accessToken = getAccessToken();
-    if (!accessToken) return null;
+export const getTokenExpireDate = (name) => {
+    const token = getCookie(name);
+    if (!token) return null;
 
     try {
-        const decodedToken = jwtDecode(accessToken);
+        const decodedToken = jwtDecode(token);
         if (decodedToken && decodedToken.exp) {
             return new Date(decodedToken.exp * 1000);
         }
@@ -108,7 +106,7 @@ export const getAccessTokenExpireDate = () => {
 };
 
 export const isAccessTokenExpiringSoon = () => {
-    const expireDate = getAccessTokenExpireDate();
+    const expireDate = getTokenExpireDate("access_token");
     if (!expireDate) return false;
 
     const expireTime = expireDate.getTime();

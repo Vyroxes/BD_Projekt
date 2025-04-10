@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
 from flask_jwt_extended.utils import decode_token
 from flask_cors import CORS
+from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_discord import DiscordOAuth2Session, requires_authorization, Unauthorized
@@ -19,7 +20,19 @@ import os
 load_dotenv(dotenv_path='.env')
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, allow_headers={
+    'Authorization'
+})
+
+talisman = Talisman(
+    app,
+    force_https=True,
+    frame_options='DENY',
+    content_security_policy={
+        'default-src': "'self'",
+    },
+    referrer_policy='strict-origin-when-cross-origin'
+)
 
 limiter = Limiter(
     app=app,
@@ -177,8 +190,8 @@ with app.app_context():
 def clean_expired_tokens():
     now = datetime.now(timezone.utc)
     expired = TokenBlacklist.query.filter(TokenBlacklist.expires_at < now).all()
-    for token in expired:
-        db.session.delete(token)
+    for jti in expired:
+        db.session.delete(jti)
     db.session.commit()
     print(f"Usunięto {len(expired)} wygasłych tokenów z blacklisty.")
 
@@ -187,6 +200,15 @@ def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
     token = TokenBlacklist.query.filter_by(jti=jti).first()
     return token is not None
+
+@jwt.revoked_token_loader
+def revoked_token_callback(jwt_header, jwt_payload):
+    return jsonify({"message": "Access token unieważniony."}), 401
+
+@app.before_request
+def method_override_disabler():
+    if 'X-HTTP-Method-Override' in request.headers:
+        return jsonify({"message": "Nagłówek X-HTTP-Method-Override jest niedozwolony."}), 403
 
 @app.route('/api/delete-account/<string:username>', methods=['DELETE'])
 @jwt_required()
@@ -628,16 +650,18 @@ def refresh():
         
         blacklisted = TokenBlacklist.query.filter_by(jti=refresh_jti).first()
         if blacklisted:
-            return jsonify({"message": "Token unieważniony."}), 401
+            return jsonify({"message": "Refresh token unieważniony."}), 401
 
         access_token_expire = "00:00:10:00"
+        access_expires_delta = timedelta(minutes=10)
         refresh_token_expire = "00:01:00:00"
+        refresh_expires_delta = timedelta(days=1)
 
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
+        access_token = create_access_token(identity=str(user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=refresh_expires_delta)
 
         return jsonify({
-            "message": "Token odświeżony pomyślnie",
+            "message": "Tokeny odświeżone pomyślnie",
             "username": user.username,
             "email": user.email,
             "access_token": access_token,
@@ -647,7 +671,7 @@ def refresh():
         }), 200
 
     except Exception as e:
-        return jsonify({"message": "Błąd podczas odświeżania tokenu: " + str(e)}), 500
+        return jsonify({"message": "Błąd podczas odświeżania tokenów: " + str(e)}), 500
 
 @app.route('/api/logout', methods=['POST'])
 @jwt_required()
@@ -663,6 +687,7 @@ def logout():
         user = User.query.filter_by(id=user_id).first()
 
         decoded_token = decode_token(refresh_token)
+        refresh_jti = decoded_token['jti']
         refresh_user_id = decoded_token['sub']
         refresh_user = User.query.filter_by(id=refresh_user_id).first()
 
@@ -671,6 +696,10 @@ def logout():
         
         if user != refresh_user:
             return jsonify({"message": "Nieprawidłowe tokeny."}), 404
+        
+        blacklisted = TokenBlacklist.query.filter_by(jti=refresh_jti).first()
+        if blacklisted:
+            return jsonify({"message": "Refresh token unieważniony."}), 401
         
         current_token = get_jwt()
         jti = current_token['jti']
@@ -715,13 +744,16 @@ def login():
 
     if user and bcrypt.check_password_hash(user.password, data.get('password')):
         access_token_expire = "00:00:10:00"
+        access_expires_delta = timedelta(minutes=10)
         if data.get('remember'):
             refresh_token_expire = "01:00:00:00"
+            refresh_expires_delta = timedelta(days=31)
         else:
             refresh_token_expire = "00:01:00:00"
+            refresh_expires_delta = timedelta(days=1)
 
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
+        access_token = create_access_token(identity=str(user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=refresh_expires_delta)
 
         response = make_response(jsonify({
             "message": "Logowanie pomyślne",
@@ -780,11 +812,14 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+       
         access_token_expire = "00:00:10:00"
+        access_expires_delta = timedelta(minutes=10)
         refresh_token_expire = "00:01:00:00"
+        refresh_expires_delta = timedelta(days=1)
 
-        access_token = create_access_token(identity=str(new_user.id))
-        refresh_token = create_refresh_token(identity=str(new_user.id))
+        access_token = create_access_token(identity=str(new_user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(new_user.id), expires_delta=refresh_expires_delta)
 
         response = make_response(jsonify({
             "message": "Rejestracja pomyślna",
@@ -859,11 +894,14 @@ def auth_discord():
             db.session.add(user)
             db.session.commit()
         
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
+        access_expires_delta = timedelta(minutes=10)
+        refresh_expires_delta = timedelta(days=1)
 
-        access_token_expire_date = datetime.now(timezone.utc) + timedelta(minutes=10)
-        refresh_token_expire_date = datetime.now(timezone.utc) + timedelta(days=1)
+        access_token = create_access_token(identity=str(user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=refresh_expires_delta)
+
+        access_token_expire_date = datetime.now(timezone.utc) + access_expires_delta
+        refresh_token_expire_date = datetime.now(timezone.utc) + refresh_expires_delta
         
         response = redirect("http://localhost:5173/home") 
         response.set_cookie("access_token", access_token, expires=access_token_expire_date, httponly=False, samesite='Lax', secure=True)
@@ -934,11 +972,13 @@ def auth_github():
             user.avatar = avatar_url
         db.session.commit()
 
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
+        access_expires_delta = timedelta(minutes=10)
+        refresh_expires_delta = timedelta(days=1)
+        access_token = create_access_token(identity=str(user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=refresh_expires_delta)
 
-        access_token_expire_date = datetime.now(timezone.utc) + timedelta(minutes=10)
-        refresh_token_expire_date = datetime.now(timezone.utc) + timedelta(days=1)
+        access_token_expire_date = datetime.now(timezone.utc) + access_expires_delta
+        refresh_token_expire_date = datetime.now(timezone.utc) + refresh_expires_delta
         
         response = redirect("http://localhost:5173/home") 
         response.set_cookie("access_token", access_token, expires=access_token_expire_date, httponly=False, samesite='Lax', secure=True)
@@ -955,11 +995,13 @@ def auth_github():
         db.session.add(new_user)
         db.session.commit()
 
-        access_token = create_access_token(identity=str(new_user.id))
-        refresh_token = create_refresh_token(identity=str(new_user.id))
+        access_expires_delta = timedelta(minutes=10)
+        refresh_expires_delta = timedelta(days=1)
+        access_token = create_access_token(identity=str(new_user.id), expires_delta=access_expires_delta)
+        refresh_token = create_refresh_token(identity=str(new_user.id), expires_delta=refresh_expires_delta)
 
-        access_token_expire_date = datetime.now(timezone.utc) + timedelta(minutes=10)
-        refresh_token_expire_date = datetime.now(timezone.utc) + timedelta(days=1)
+        access_token_expire_date = datetime.now(timezone.utc) + access_expires_delta
+        refresh_token_expire_date = datetime.now(timezone.utc) + refresh_expires_delta
 
         response = redirect("http://localhost:5173/home") 
         response.set_cookie("access_token", access_token, expires=access_token_expire_date, httponly=False, samesite='Lax', secure=True)

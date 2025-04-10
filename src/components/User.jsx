@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { authAxios, clearTokens, getCookie } from '../utils/Auth';
+import { authAxios, clearTokens, getCookie, getTokenExpireDate } from '../utils/Auth';
 
 import './User.css';
 
 const User = () => {
+    const [accessTokenExpiration, setAccessTokenExpiration] = useState(null);
+    const [timeToAccessTokenExpire, setTimeToAccessTokenExpire] = useState(null);
+    const [refreshTokenExpiration, setRefreshTokenExpiration] = useState(null);
+    const [timeToRefreshTokenExpire, setTimeToRefreshTokenExpire] = useState(null);
     const [loading, setLoading] = useState(true);
     const [email, setEmail] = useState(null); 
     const [avatarUrl, setAvatarUrl] = useState(null);
@@ -21,8 +25,70 @@ const User = () => {
     const adminUsername = import.meta.env.VITE_ADMIN_USERNAME;
 
     useEffect(() => {
+        const interval = setInterval(() => {
+            const expireDate = getTokenExpireDate("access_token");
+            if (expireDate) {
+                const currentTime = new Date().getTime();
+                const timeLeft = expireDate.getTime() - currentTime;
+    
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    setTimeToAccessTokenExpire(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+                } else {
+                    setTimeToAccessTokenExpire("Access token wygasł.");
+                    clearInterval(interval);
+                }
+            } else {
+                setTimeToAccessTokenExpire("Brak danych.");
+                clearInterval(interval);
+            }
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const expireDate = getTokenExpireDate("refresh_token");
+            if (expireDate) {
+                const currentTime = new Date().getTime();
+                const timeLeft = expireDate.getTime() - currentTime;
+    
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    setTimeToRefreshTokenExpire(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+                } else {
+                    setTimeToRefreshTokenExpire("Refresh token wygasł.");
+                    clearInterval(interval);
+                }
+            } else {
+                setTimeToRefreshTokenExpire("Brak danych.");
+                clearInterval(interval);
+            }
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
         if (username) {
             fetchUserData();
+            setAccessTokenExpiration(
+                getTokenExpireDate("access_token") 
+                    ? getTokenExpireDate("access_token").toLocaleString() 
+                    : "Brak danych"
+            );
+            setRefreshTokenExpiration(
+                getTokenExpireDate("refresh_token") 
+                    ? getTokenExpireDate("refresh_token").toLocaleString() 
+                    : "Brak danych"
+            );
         }
     }, [username]);
 
@@ -104,10 +170,37 @@ const User = () => {
                 <a>{email}</a>
             </div>
             <div className="user-stats">
+                {username === currentUsername && currentUsername === adminUsername && (<>
+                    <h2>Informacje administratora</h2>
+                    <li>Access token:</li>
+                    <textarea readOnly value={getCookie("access_token") || "brak"}></textarea>
+                    <li>Wygaśnięcie access tokenu:
+                        <a>{accessTokenExpiration || "brak"}</a>
+                    </li>
+                    <li>Czas do wygaśnięcia access tokenu:
+                        <a>{timeToAccessTokenExpire || "brak"}</a>
+                    </li>
+                    <li>Refresh token:</li>
+                    <textarea readOnly value={getCookie("refresh_token") || "brak"}></textarea>
+                    <li>Wygaśnięcie refresh tokenu:
+                        <a>{refreshTokenExpiration || "brak"}</a>
+                    </li>
+                    <li>Czas do wygaśnięcia refresh tokenu:
+                        <a>{timeToRefreshTokenExpire}</a>
+                    </li>
+                    <li>Session token:</li>
+                    <textarea readOnly value={getCookie("session") || "brak"}></textarea>
+                </>)}
                 <h2>Statystyki</h2>
-                    <li>Książki w kolekcji: {bookStats.collectionCount}</li>
-                    <li>Książki na liście życzeń: {bookStats.wishlistCount}</li>
-                    <li>Łączna liczba stron: {bookStats.totalPages}</li>
+                <li>Książki w kolekcji:
+                    <a>{bookStats.collectionCount}</a>
+                </li>
+                <li>Książki na liście życzeń:
+                    <a>{bookStats.wishlistCount}</a>
+                </li>
+                <li>Łączna liczba stron:
+                    <a>{bookStats.totalPages}</a>
+                </li>
             </div>
             <div className="user-actions">
                 {username !== currentUsername && (<button onClick={() => navigate('/users')}>Powrót</button>)}

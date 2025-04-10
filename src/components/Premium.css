@@ -225,9 +225,9 @@
     }
 }
 
-@media (max-width: 1220px) {
+@media (max-width: 1244px) {
     .premium-content,
     .premiumplus-content {
-        width: 70%;
+        max-width: 80vw;
     }
 }

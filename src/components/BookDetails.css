@@ -208,7 +208,7 @@
     to { width: 44vw; }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1244px) {
     .book-details {
         flex-direction: column;
         align-items: center;
