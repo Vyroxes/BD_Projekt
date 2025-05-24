@@ -1,0 +1,95 @@
+
+from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from controllers.user_controller import delete_user_and_data, get_all_users, get_user_by_username
+from models.subscription import Subscription
+from models import User, BookCollection, WishList, db
+from sqlalchemy import func
+import os
+
+user_bp = Blueprint('user_bp', __name__)
+
+@user_bp.route('/api/delete-account/<string:username>', methods=['DELETE'])
+@jwt_required()
+def delete_account(username):
+    try:
+        current_user_id = get_jwt_identity()
+        admin_username = os.getenv('ADMIN_USERNAME')
+        user = get_user_by_username(username)
+
+        if not user:
+            return jsonify({"message": "Użytkownik nie istnieje."}), 404
+        
+        current_user = User.query.get(current_user_id)
+
+        if user.id != int(current_user_id) and current_user.username.lower() != admin_username.lower():
+            return jsonify({"message": "Brak uprawnień do usunięcia tego konta."}), 403
+
+        delete_user_and_data(user)
+
+        return jsonify({"message": f"Konto użytkownika '{username}' zostało pomyślnie usunięte."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Błąd podczas usuwania konta użytkownika: {str(e)}"}), 500
+
+@user_bp.route('/api/user/<string:username>', methods=['GET'])
+@jwt_required()
+def get_user(username):
+    try:
+        user = User.query.filter(func.lower(User.username) == username.lower()).first()
+
+        if not user:
+            return jsonify({"message": "Użytkownik nie istnieje."}), 404
+
+        active_subscription = Subscription.query.filter_by(
+            username=username,
+            status="ACTIVE"
+        ).order_by(Subscription.end_date.desc()).first()
+
+        book_collection = BookCollection.query.filter_by(user_id=user.id).all()
+        book_collection_data = [book.to_dict() for book in book_collection]
+    
+        wish_list = WishList.query.filter_by(user_id=user.id).all()
+        wish_list_data = [book.to_dict() for book in wish_list]
+
+        return jsonify({
+            "username": user.username,
+            "email": user.email,
+            "avatar_url": user.avatar,
+            "github_id": user.github_id,
+            "discord_id": user.discord_id,
+            "premium": active_subscription.plan if active_subscription else None,
+            "premium_expiration": active_subscription.end_date.isoformat() if active_subscription else None,
+            "account_created": user.created_at.isoformat(),
+            "account_created": user.created_at.isoformat(),
+            "book_collection": book_collection_data,
+            "wish_list": wish_list_data
+        }), 200
+    except Exception as e:
+        return jsonify({"message": f"Błąd podczas pobierania danych użytkownika: {str(e)}"}), 500
+
+@user_bp.route('/api/users', methods=['GET'])
+@jwt_required()
+def get_users():
+    try:
+        users = get_all_users()
+        user_list = [{"username": u.username, "email": u.email, "avatar_url": u.avatar or ""} for u in users]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"message": f"Błąd podczas pobierania danych użytkowników: {str(e)}"}), 500
+
+@user_bp.route('/api/<string:username>/<string:type>', methods=['GET'])
+@jwt_required()
+def get_list(username, type):
+    user = User.query.filter(func.lower(User.username) == username.lower()).first()
+    if not user:
+        return jsonify({"message": "Użytkownik nie istnieje."}), 404
+
+    if type == 'bc':
+        book_collection = BookCollection.query.filter_by(user_id=user.id).all()
+        book_collection_data = [book.to_dict() for book in book_collection]
+        return jsonify(book_collection_data), 200
+    elif type == 'wl':
+        wish_list = WishList.query.filter_by(user_id=user.id).all()
+        wish_list_data = [book.to_dict() for book in wish_list]
+        return jsonify(wish_list_data), 200

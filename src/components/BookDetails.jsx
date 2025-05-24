@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { authAxios } from '../utils/Auth';
 
@@ -12,6 +12,8 @@ const BookDetails = () => {
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         checkBookID();
     }, []);
@@ -21,7 +23,7 @@ const BookDetails = () => {
             let response;
             const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -47,7 +49,7 @@ const BookDetails = () => {
             let response;
             const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-details/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
@@ -72,7 +74,7 @@ const BookDetails = () => {
             let response;
             const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            response = await authAxios.post(`/api/move-book-to/${type}/${id}`);
+            response = await authAxios.post(`${apiUrl}/api/move-book-to/${type}/${id}`);
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-book-details/")) {
@@ -101,7 +103,7 @@ const BookDetails = () => {
             let response;
             const type = location.pathname.startsWith("/bc-book-details/") ? "bc" : "wl";
 
-            response = await authAxios.delete(`/api/remove-book/${type}/${id}`);
+            response = await authAxios.delete(`${apiUrl}/api/remove-book/${type}/${id}`);
 
             if (response.status === 200) {
                 if (location.pathname.startsWith("/bc-book-details/")) {

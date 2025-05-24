@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoMdClose } from "react-icons/io";
 import { authAxios, getCookie } from '../utils/Auth';
@@ -16,13 +16,15 @@ const Users = () => {
 
     const isDisabled = search.trim() === "";
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
         try {
-            const response = await authAxios.get("/api/users");
+            const response = await authAxios.get(`${apiUrl}/api/users`);
             if (response.status === 200) {
                 const filteredUsers = response.data.filter(user => user.username !== currentUsername);
                 setUsers(filteredUsers);

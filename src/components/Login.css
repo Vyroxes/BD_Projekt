@@ -1,12 +1,18 @@
 .container-login {
-    height: 100vh;
-    display: flex;
+    padding: 20px;
+    min-height: 100dvh;
+	display: flex;
     justify-content: center;
     align-items: center;
-    font-size: large;
     background: url('../assets/login_background.jpg') no-repeat center center/cover;
     backdrop-filter: blur(20px);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.container-login.animate {
     animation: fadeIn 1s ease forwards;
 }
 
@@ -28,7 +34,7 @@
 .container-login input[type="text"],
 .container-login input[type="email"],
 .container-login input[type="password"] {
-    width: 280px;
+    width: 100%;
     margin-left: 10px;
 }
 
@@ -37,11 +43,13 @@
 }
 
 .container-login2 {
-    width: 380px;
+    width: 100%;
+    max-width: 400px;
     padding: 2rem;
     border-radius: 30px;
     background-color: rgba(17, 17, 17, 0.97);
     position: relative;
+    box-sizing: border-box;
 }
 
 @property --angle {
@@ -50,7 +58,8 @@
     inherits: false;
 }
 
-.container-login2::before, .container-login2::after {
+.gradient-background {
+    --angle: 0deg;
     content: '';
     position: absolute;
     height: 100%;
@@ -62,10 +71,12 @@
     z-index: -1;
     padding: 3px 2px;
     border-radius: 30px;
-    animation: 3s spin linear infinite;
+    animation: 
+        1s fadeInGradient ease forwards,
+        3s spin linear infinite;
 }
 
-.container-login2::before {
+.gradient-blur {
     filter: blur(1.5rem);
     opacity: 0.5;
 }
@@ -112,7 +123,7 @@
 
 .login-button-show-password {
     position: absolute;
-    right: 22px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%) !important;
     background: transparent !important;
@@ -184,7 +195,6 @@
     transform: scale(0);
     animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
-
 .login-socials button:nth-child(1) {
     animation-delay: 1.1s;
 }
@@ -248,6 +258,16 @@
     background-color:#3542d0;
 }
 
+@keyframes fadeOutGradient {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes fadeInGradient {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -278,4 +298,19 @@
 @keyframes shimmer {
     0% { background-position: -100% 0; }
     100% { background-position: 100% 0; }
+}
+
+@media (max-aspect-ratio: 9/16) {
+    .container-login2 {
+        padding: 1.5rem;
+    }
+    .container-login h1 {
+        font-size: xx-large;
+    }
+    .login-group input {
+        width: 100%;
+    }
+    .login-actions label, .login-socials label, .login-register label, .register-login label{
+        font-size: medium;
+    }
 }

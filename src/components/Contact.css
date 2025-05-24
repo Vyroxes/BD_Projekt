@@ -44,6 +44,15 @@
     max-height: 360px;
 }
 
+.contact-message {
+    color: #4bff2b;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease forwards;
+    margin-bottom: 30px;
+}
+
 .contact-row {
     width: calc(100vw/3);
     opacity: 0;

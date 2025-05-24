@@ -50,6 +50,8 @@ const EditBook = () =>
         "popularnonaukowe",
     ];
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         checkBookID();
     }, []);
@@ -81,7 +83,7 @@ const EditBook = () =>
             let response;
             const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -97,7 +99,7 @@ const EditBook = () =>
                 navigate('/home');
             }
         } catch (error) {
-            console.error('Error checking book ID:', error);
+            console.error('Błąd podczas sprawdzania ID książki: ', error);
             navigate('/home');
         }
     };
@@ -109,13 +111,13 @@ const EditBook = () =>
             let response;
             const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-details/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
             }
         } catch (error) {
-            console.error('Error fetching book details:', error);
+            console.error('Błąd podczas pobierania szczegółów książki: ', error);
         }
     };
 
@@ -151,7 +153,7 @@ const EditBook = () =>
             let response;
             const type = location.pathname.startsWith("/bc-edit-book/") ? "bc" : "wl";
 
-            response = await authAxios.patch(`/api/edit-book/${type}/${id}`, {
+            response = await authAxios.patch(`${apiUrl}/api/edit-book/${type}/${id}`, {
                 title,
                 author,
                 cover,
@@ -171,7 +173,7 @@ const EditBook = () =>
                 }
             }
         } catch (error) {
-            console.error('Error submitting book edit:', error);
+            console.error('Błąd podczas edytowania książki: ', error);
         }
     };
 

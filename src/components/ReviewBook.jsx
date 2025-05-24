@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { isAuthenticated, authAxios } from '../utils/Auth';
+import { authAxios } from '../utils/Auth';
 
 import './ReviewBook.css';
 
@@ -14,6 +14,8 @@ const ReviewBook = () => {
     const [review, setReview] = useState("");
 
     const { id } = useParams();
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         checkBookID();
@@ -31,7 +33,7 @@ const ReviewBook = () => {
             let response;
             const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-exists/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-exists/${type}/${id}`);
 
             if (response.status === 200) {
                 if (response.data['exists'] === false) {
@@ -57,7 +59,7 @@ const ReviewBook = () => {
             let response;
             const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/book-details/${type}/${id}`);
+            response = await authAxios.get(`${apiUrl}/api/book-details/${type}/${id}`);
 
             if (response.status === 200) {
                 setBook(response.data);
@@ -73,7 +75,7 @@ const ReviewBook = () => {
             let response;
             const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            response = await authAxios.patch(`/api/review-book/${type}/${id}`, {
+            response = await authAxios.patch(`${apiUrl}/api/review-book/${type}/${id}`, {
                 rate: null,
                 review: null,
             });
@@ -95,7 +97,7 @@ const ReviewBook = () => {
             let response;
             const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
 
-            response = await authAxios.patch(`/api/review-book/${type}/${id}`, {
+            response = await authAxios.patch(`${apiUrl}/api/review-book/${type}/${id}`, {
                 rate,
                 review,
             });

@@ -5,7 +5,6 @@ body {
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
   color: #ffffff;
-  min-height: 100vh;
   margin: 0;
   padding: 0;
   line-height: 1.6;

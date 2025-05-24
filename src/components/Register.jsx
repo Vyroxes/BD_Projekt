@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated, authAxios, setTokens } from '../utils/Auth';
 
 import './Login.css';
 import './Register.css';
 
-const Register = ({ onLogin }) => {
+const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -16,8 +16,10 @@ const Register = ({ onLogin }) => {
     const [password2, setPassword2] = useState("");
     const [dataError, setDataError] = useState("");
     const [loginError, setLoginError] = useState("");
+    const [animate, setAnimate] = useState(true);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const isDisabled = dataError !== "" || username.trim() === "" || email.trim() === ""  || password.trim() === "" || password2.trim() === "";
     const isDisabled2 = password.trim() === "";
@@ -30,6 +32,8 @@ const Register = ({ onLogin }) => {
     const specialchar = /[!@#$%^&*(),.?":{}|<>[\]]/;
     const polishChars = /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/;
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         const checkAuth = async () => {
             const result = await isAuthenticated();
@@ -40,25 +44,33 @@ const Register = ({ onLogin }) => {
         checkAuth();
     }, [navigate]);
 
+    useEffect(() => {
+        if (location.state?.skipAnimation) {
+            setAnimate(false);
+        }
+    }, [location.state]);
+
     const onSubmit = async () => {
         try {
-            const response = await authAxios.post("/api/register", {
+            const response = await authAxios.post(`${apiUrl}/api/register`, {
                 username,
                 email,
                 password,
                 password2
+            }, {
+                withCredentials: true,
             });
 
             if (response.status === 201) {
                 setTokens(
+                    response.data.username,
+                    response.data.email,
                     response.data.access_token,
                     response.data.refresh_token,
                     response.data.expire_time,
-                    response.data.refresh_expire_time,
-                    response.data.username,
-                    response.data.email
+                    response.data.refresh_expire_time
                 );
-                onLogin();
+                
                 navigate('/home');
             }
         } catch (error) {
@@ -157,15 +169,19 @@ const Register = ({ onLogin }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (dataError) return;
-
         setLoginError('');
-
         await onSubmit();
     };
 
+    const handleLoginClick = () => {
+        navigate('/login', { state: { skipAnimation: true, } });
+    };
+
     return (
-        <div className="container-login">
+        <div className={`container-login${animate ? ' animate' : ''}`}>
             <div className="container-login2">
+                <div className='gradient-background'></div>
+                <div className='gradient-blur'></div>
                 <h1>Rejestracja</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="login-group">
@@ -252,7 +268,7 @@ const Register = ({ onLogin }) => {
                     </div>
                     <div className="register-login">
                         <label>Masz konto?</label>
-                        <button type="button" onClick={() => navigate("/login")}>
+                        <button type="button" onClick={handleLoginClick}>
                             Zaloguj się
                         </button>
                     </div>

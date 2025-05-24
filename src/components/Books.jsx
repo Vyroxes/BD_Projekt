@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import DoubleRangeSlider from "./DoubleRangeSlider";
 import { IoMdClose } from "react-icons/io";
@@ -83,10 +83,13 @@ const Books = () =>
         "pagesAsc", "pagesDesc",
         "rateAsc", "rateDesc"
     ];
+
+    const apiUrl = import.meta.env.VITE_API_URL;
     
     useEffect(() => {
+        setLoading(true);
         fetchBooks();
-    }, []);
+    }, [location.pathname]);
 
     const fetchBooks = async () => 
     {
@@ -95,7 +98,7 @@ const Books = () =>
             let response;
             const type = location.pathname.startsWith("/book-collection") ? "bc" : "wl";
 
-            response = await authAxios.get(`/api/${username}/${type}`);
+            response = await authAxios.get(`${apiUrl}/api/${username}/${type}`);
 
             if (response.status == 200) {
                 setBooks(response.data);
@@ -201,7 +204,7 @@ const Books = () =>
             let response;
             const type = location.pathname.startsWith("/book-collection") ? "bc" : "wl";
 
-            response = await authAxios.delete(`/api/remove-all-books/${type}`);
+            response = await authAxios.delete(`${apiUrl}/api/remove-all-books/${type}`);
 
             if (response.status === 200) {
                 fetchBooks();
@@ -329,8 +332,8 @@ const Books = () =>
             <div className='book-collection-container'>
                 {filteredBooks.length > 0 ? (
                     filteredBooks.map((book, index) => (
-                        <div className='book-card-container' style={{"--card-index": index}}>
-                            <div key={book.id} className="book-card" onClick={() => {
+                        <div className='book-card-container' style={{"--card-index": index}} key={book.id}>
+                            <div className="book-card" onClick={() => {
                                     if(location.pathname === "/book-collection")
                                     {
                                         navigate(`/bc-book-details/${book.id}`);
@@ -355,11 +358,13 @@ const Books = () =>
                         </div>
                     ))
                 ) : (
-                    location.pathname === "/book-collection" ? (
-                        <h3 className="no-books">Brak książek w kolekcji</h3>
-                    ) : location.pathname === "/wish-list" ? (
-                        <h3 className="no-books">Brak książek na liście życzeń</h3>
-                    ) : null
+                    !loading && (
+                        location.pathname === "/book-collection" ? (
+                            <h3 className="no-books">Brak książek w kolekcji</h3>
+                        ) : location.pathname === "/wish-list" ? (
+                            <h3 className="no-books">Brak książek na liście życzeń</h3>
+                        ) : null
+                    )
                 )}
             </div>
         </div>

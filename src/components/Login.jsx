@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { FaUser, FaLock, FaGithub, FaDiscord } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated, authAxios, setTokens } from '../utils/Auth';
 
 import './Login.css';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
     const [loginError, setLoginError] = useState("");
+    const [animate, setAnimate] = useState(true);
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -25,25 +29,34 @@ const Login = ({ onLogin }) => {
         checkAuth();
     }, [navigate]);
 
+    useEffect(() => {
+        if (location.state?.skipAnimation) {
+            setAnimate(false);
+        }
+    }, [location.state]);
+
     const isDisabled = usernameOrEmail.trim() === "" || password.trim() === "";
 
     const onSubmit = async () => {
         try {
-            const response = await authAxios.post("/api/login", {
+            const response = await authAxios.post(`${apiUrl}/api/login`, {
                 usernameOrEmail,
                 password,
                 remember,
+            }, {
+                withCredentials: true,
             });
 
             if (response.status === 200) {
                 setTokens(
+                    response.data.username,
+                    response.data.email,
                     response.data.access_token,
                     response.data.refresh_token,
                     response.data.expire_time,
-                    response.data.refresh_expire_time,
-                    response.data.username,
-                    response.data.email);
-                onLogin();
+                    response.data.refresh_expire_time
+                );
+                
                 navigate('/home');
             }
         } catch (error) {
@@ -58,11 +71,11 @@ const Login = ({ onLogin }) => {
     };
 
     const handleGithubLogin = () => {
-        window.location.href = "/api/login/github";
+        window.location.href = `${apiUrl}/api/login/github`;
     };
 
     const handleDiscordLogin = () => {
-        window.location.href = "/api/login/discord";
+        window.location.href = `${apiUrl}/api/login/discord`;
     };
 
     const handleSubmit = async (e) => {
@@ -71,9 +84,15 @@ const Login = ({ onLogin }) => {
         await onSubmit();
     };
 
+    const handleRegisterClick = () => {
+        navigate('/register', { state: { skipAnimation: true } });
+    };
+
     return (
-        <div className="container-login">
+        <div className={`container-login${animate ? ' animate' : ''}`}>
             <div className="container-login2">
+                <div className='gradient-background'></div>
+                <div className='gradient-blur'></div>
                 <h1>Logowanie</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="login-group">
@@ -140,7 +159,7 @@ const Login = ({ onLogin }) => {
                     </div>
                     <div className="login-register">
                         <label>Nie masz konta?</label>
-                        <button type="button" onClick={() => navigate("/register")}>
+                        <button type="button" onClick={handleRegisterClick}>
                             Zarejestruj się
                         </button>
                     </div>

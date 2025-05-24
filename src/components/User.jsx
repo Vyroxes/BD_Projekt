@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authAxios, clearTokens, getCookie, getTokenExpireDate } from '../utils/Auth';
 
@@ -12,6 +12,11 @@ const User = () => {
     const [loading, setLoading] = useState(true);
     const [email, setEmail] = useState(null); 
     const [avatarUrl, setAvatarUrl] = useState(null);
+    const [githubId, setGithubId] = useState(null);
+    const [discordId, setDiscordId] = useState(null);
+    const [premium, setPremium] = useState(false);
+    const [premiumExpiration, setPremiumExpiration] = useState(null);
+    const [accountCreated, setAccountCreated] = useState(null);
     const [bookStats, setBookStats] = useState({
         collectionCount: 0,
         wishlistCount: 0,
@@ -22,7 +27,9 @@ const User = () => {
 
     const navigate = useNavigate();
     const currentUsername = getCookie('username');
+
     const adminUsername = import.meta.env.VITE_ADMIN_USERNAME;
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -77,55 +84,74 @@ const User = () => {
     }, []);
 
     useEffect(() => {
-        if (username) {
-            fetchUserData();
-            setAccessTokenExpiration(
-                getTokenExpireDate("access_token") 
-                    ? getTokenExpireDate("access_token").toLocaleString() 
-                    : "Brak danych"
-            );
-            setRefreshTokenExpiration(
-                getTokenExpireDate("refresh_token") 
-                    ? getTokenExpireDate("refresh_token").toLocaleString() 
-                    : "Brak danych"
-            );
-        }
+        const interval = setInterval(() => {
+            const accessToken = getCookie("access_token");
+            if (accessToken) {
+                fetchUserData();
+                setAccessTokenExpiration(
+                    getTokenExpireDate("access_token") 
+                        ? getTokenExpireDate("access_token").toLocaleString('pl-PL', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) 
+                        : "Brak danych"
+                );
+                setRefreshTokenExpiration(
+                    getTokenExpireDate("refresh_token") 
+                        ? getTokenExpireDate("refresh_token").toLocaleString('pl-PL', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })  
+                        : "Brak danych"
+                );
+                clearInterval(interval);
+            }
+        }, 500);
+
+        return () => clearInterval(interval);
     }, [username]);
 
     const fetchUserData = async () => {
         try {
-            const response = await authAxios.get(`/api/user/${username}`);
+            const response = await authAxios.get(`${apiUrl}/api/user/${username}`, {
+                withCredentials: true,
+            });
+
             if (response.status === 200) {
+                if (response.data.username && response.data.username !== username) {
+                    navigate(`/users/${response.data.username}`, { replace: true });
+                    return;
+                }
                 setEmail(response.data.email);
                 setAvatarUrl(response.data.avatar_url);
-                fetchBookStats();
-            } else {
+                setGithubId(response.data.github_id);
+                setDiscordId(response.data.discord_id);
+                setPremium(response.data.premium);
+                setPremiumExpiration(new Date(response.data.premium_expiration));
+                setAccountCreated(new Date(response.data.account_created));
+                setBookStats({
+                    collectionCount: response.data.book_collection.length,
+                    wishListCount: response.data.wish_list.length,
+                    totalPages: response.data.book_collection.reduce((total, book) => total + (book.pages || 0), 0)
+                });
+                setLoading(false);
+            } else if (response.status === 404) {
+                console.error("Użytkownik nie znaleziony.");
                 navigate('/home');
             }
         } catch (error) {
-            console.error("Błąd podczas pobierania danych użytkownika: ", error);
-            navigate('/home');
-        }
-    };
-    
-    const fetchBookStats = async () => {
-        try {
-            const collectionResponse = await authAxios.get(`/api/${username}/bc`);
-            const wishlistResponse = await authAxios.get(`/api/${username}/wl`);
-
-            const collectionCount = collectionResponse.data.length;
-            const wishlistCount = wishlistResponse.data.length;
-            const totalPages = collectionResponse.data.reduce((sum, book) => sum + book.pages, 0) +
-                                wishlistResponse.data.reduce((sum, book) => sum + book.pages, 0);
-
-            setBookStats({
-                collectionCount,
-                wishlistCount,
-                totalPages,
-            });
-            setLoading(false);
-        } catch (error) {
-            console.error("Błąd podczas pobierania statystyk książek: ", error);
+            if (error.response && error.response.status === 404) {
+                console.error("Użytkownik nie znaleziony.");
+                navigate('/home');
+            } else {
+                console.error("Błąd podczas pobierania danych użytkownika: ", error);
+            }
         }
     };
 
@@ -136,15 +162,70 @@ const User = () => {
             return;
         }
         try {
-            const response = await authAxios.delete(`/api/delete-account/${username}`);
+            const response = await authAxios.delete(`${apiUrl}/api/delete-account/${username}`);
             if (response.status === 200) {
-                console.log("Usunięto konto pomyślnie");
-                clearTokens();
-                navigate('/login');
+                if (currentUsername === username) {
+                    console.log("Usunięto konto pomyślnie.");
+                    clearTokens();
+                    navigate('/login');
+                } else {
+                    console.log("Usunięto konto pomyślnie.");
+                    navigate('/users');
+                }
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Błąd podczas usuwania konta: ", error);
+        }
+    };
+
+    const deletePremium = async () => {
+        const confirmCancel = window.confirm("Czy na pewno chcesz usunąć subskrypcję?");
+        
+        if (!confirmCancel) {
+            return;
+        }
+        
+        try {
+            const statusResponse = await authAxios.get(`${apiUrl}/api/payments/status/${username}`);
+            const currentSub = statusResponse.data.subscription;
+            
+            const response = await authAxios.post(`${apiUrl}/api/payments/set/${username}`, {
+                status: 'CANCELLED',
+                plan: currentSub?.plan
+            }, {
+                withCredentials: true,
+            });
+            
+            if (response.status === 200) {
+                console.log("Subskrypcja anulowana pomyślnie.");
+                fetchUserData();
+            }
+        } catch (error) {
+            console.error("Wystąpił błąd podczas anulowania subskrypcji: ", error);
+        }
+    };
+
+    const enablePremium = async (plan) => {
+        const confirmUpgrade = window.confirm("Czy na pewno chcesz aktywować subskrypcję?");
+        
+        if (!confirmUpgrade) {
+            return;
+        }
+        
+        try {           
+            const response = await authAxios.post(`${apiUrl}/api/payments/set/${username}`, {
+                status: 'ACTIVE',
+                plan: plan
+            }, {
+                withCredentials: true,
+            });
+            
+            if (response.status === 200) {
+                console.log("Subskrypcja aktywowana pomyślnie.");
+                fetchUserData();
+            }
+        } catch (error) {
+            console.error("Wystąpił błąd podczas aktywacji subskrypcji: ", error);
         }
     };
 
@@ -167,44 +248,79 @@ const User = () => {
                     loading="lazy"
                     />
                 <h1>{username}</h1>
-                <a>{email}</a>
+                <p>{email}</p>
             </div>
             <div className="user-stats">
-                {username === currentUsername && currentUsername === adminUsername && (<>
-                    <h2>Informacje administratora</h2>
-                    <li>Access token:</li>
-                    <textarea readOnly value={getCookie("access_token") || "brak"}></textarea>
-                    <li>Wygaśnięcie access tokenu:
-                        <a>{accessTokenExpiration || "brak"}</a>
-                    </li>
-                    <li>Czas do wygaśnięcia access tokenu:
-                        <a>{timeToAccessTokenExpire || "brak"}</a>
-                    </li>
-                    <li>Refresh token:</li>
-                    <textarea readOnly value={getCookie("refresh_token") || "brak"}></textarea>
-                    <li>Wygaśnięcie refresh tokenu:
-                        <a>{refreshTokenExpiration || "brak"}</a>
-                    </li>
-                    <li>Czas do wygaśnięcia refresh tokenu:
-                        <a>{timeToRefreshTokenExpire}</a>
-                    </li>
-                    <li>Session token:</li>
-                    <textarea readOnly value={getCookie("session") || "brak"}></textarea>
-                </>)}
+                {(username === currentUsername || currentUsername === adminUsername) && (
+                    <>
+                        <h2>Informacje użytkownika</h2>
+                        <li>Pakiet:
+                            <p>{premium ? `${premium} do ${premiumExpiration.toLocaleString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}` : "brak"}
+                            </p>
+                        </li>
+                        <li>Połączony z Github:
+                            <p>{githubId ? `tak (id: ${githubId})` : "nie"}</p>
+                        </li>
+                        <li>Połączony z Discord:
+                            <p>{discordId ? `tak (id: ${discordId})` : "nie"}</p>
+                        </li>
+                        <li>Data utworzenia konta:
+                            <p>{accountCreated.toLocaleString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</p>
+                        </li>
+                    </>
+                )}
+
                 <h2>Statystyki</h2>
                 <li>Książki w kolekcji:
-                    <a>{bookStats.collectionCount}</a>
+                    <p>{bookStats.collectionCount ? bookStats.collectionCount : "brak"}</p>
                 </li>
                 <li>Książki na liście życzeń:
-                    <a>{bookStats.wishlistCount}</a>
+                    <p>{bookStats.wishlistCount ? bookStats.wishlistCount : "brak"}</p>
                 </li>
                 <li>Łączna liczba stron:
-                    <a>{bookStats.totalPages}</a>
+                    <p>{bookStats.totalPages ? bookStats.totalPages : 0}</p>
                 </li>
+
+                {(username === currentUsername && currentUsername === adminUsername) && (
+                    <>
+                        <h2>Informacje administratora</h2>
+                        <li>Access token:</li>
+                        <textarea readOnly value={getCookie("access_token") || "brak"}></textarea>
+                        <li>Wygaśnięcie access tokenu:
+                            <p>{accessTokenExpiration || "brak"}</p>
+                        </li>
+                        <li>Czas do wygaśnięcia access tokenu:
+                            <p>{timeToAccessTokenExpire || "brak"}</p>
+                        </li>
+                        <li>Refresh token:</li>
+                        <textarea readOnly value={getCookie("refresh_token") || "brak"}></textarea>
+                        <li>Wygaśnięcie refresh tokenu:
+                            <p>{refreshTokenExpiration || "brak"}</p>
+                        </li>
+                        <li>Czas do wygaśnięcia refresh tokenu:
+                            <p>{timeToRefreshTokenExpire || "brak"}</p>
+                        </li>
+                    </>
+                )}
             </div>
             <div className="user-actions">
                 {username !== currentUsername && (<button onClick={() => navigate('/users')}>Powrót</button>)}
                 {(username === currentUsername || currentUsername === adminUsername) && (<button className='delete-account-button' onClick={() => deleteAccount()}>Usuń konto</button>)}
+                {(premium) && (currentUsername === adminUsername) && (<button className='delete-account-button' onClick={() => deletePremium()}>Usuń pakiet</button>)}
+                {(!premium) && (currentUsername === adminUsername) && (<button onClick={() => enablePremium("PREMIUM")}>Ustaw pakiet PREMIUM</button>)}
+                {(!premium) && (currentUsername === adminUsername) && (<button onClick={() => enablePremium("PREMIUM+")}>Ustaw pakiet PREMIUM+</button>)}
             </div>
         </div>
     );

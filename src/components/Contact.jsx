@@ -1,43 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import { authAxios } from '../utils/Auth';
 
 import './Contact.css';
 
 const Contact = () => {
-    const navigate = useNavigate();
-
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [text, setText] = useState("");
 
+    const [contactMsg, setContactMsg] = useState("");
+
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const onSubmit = async () => {
         try {
-            const response = await authAxios.post("/api/contact", {
+            const response = await authAxios.post(`${apiUrl}/api/contact`, {
                 username,
                 email,
                 subject,
                 text,
             });
 
-            if (response.status === 201) {
-                console.log("Message sent successfully.");
+            if (response.status === 200) {
+                console.log("Wiadomość została wysłana pomyślnie.");
+                setUsername("");
+                setEmail("");
+                setSubject("");
+                setText("");
+                setContactMsg("Wiadomość została wysłana pomyślnie.");
             }
         } catch (error) {
-            console.error("Error sending message:", error);
+            console.error("Błąd podczas wysyłania wiadomości: ", error);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setContactMsg("");
         await onSubmit();
     };
 
     return (
         <div className='contact-container'>
             <h1>Kontakt</h1>
+            {contactMsg && <div className="contact-message">{contactMsg}</div>}
             <div className='contact-container2'>
                 <form onSubmit={handleSubmit}>
                     <div className='contact-row'>

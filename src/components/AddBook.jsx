@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { authAxios } from '../utils/Auth';
 
@@ -23,6 +23,8 @@ const AddBook = () =>
     const [date, setDate] = useState("");
     const [pages, setPages] = useState("");
     const [desc, setDesc] = useState("");
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const genresList = [
         "fantasy",
@@ -256,10 +258,10 @@ const AddBook = () =>
             const type = location.pathname === "/bc-add-book" ? "bc" : "wl";
 
             if (book) {
-                response = await authAxios.post(`/api/add-book/${type}`, book); 
+                response = await authAxios.post(`${apiUrl}/api/add-book/${type}`, book); 
             }
             else {
-                response = await authAxios.post(`/api/add-book/${type}`, {
+                response = await authAxios.post(`${apiUrl}/api/add-book/${type}`, {
                     title,
                     author,
                     cover,

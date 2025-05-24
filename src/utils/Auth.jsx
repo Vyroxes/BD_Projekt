@@ -4,9 +4,10 @@ import { jwtDecode } from 'jwt-decode';
 const TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const USERNAME_KEY = 'username';
-const SESSION_KEY = 'session';
 
-export const setTokens = (accessToken, refreshToken, accessTokenExpire, refreshTokenExpire, username, email) => {
+const apiUrl = import.meta.env.VITE_API_URL;
+
+export const setTokens = (username, email, accessToken, refreshToken, accessTokenExpire, refreshTokenExpire) => {
     const accessTokenExpireDate = new Date();
     const [days, hours, minutes, seconds] = accessTokenExpire.split(':').map(Number);
     accessTokenExpireDate.setDate(accessTokenExpireDate.getDate() + days);
@@ -21,9 +22,12 @@ export const setTokens = (accessToken, refreshToken, accessTokenExpire, refreshT
     refreshTokenExpireDate.setMinutes(refreshTokenExpireDate.getMinutes() + rMinutes);
     refreshTokenExpireDate.setSeconds(refreshTokenExpireDate.getSeconds() + rSeconds);
 
-    document.cookie = `${TOKEN_KEY}=${accessToken}; path=/; secure; expires=${accessTokenExpireDate.toUTCString()};`;
-    document.cookie = `${REFRESH_TOKEN_KEY}=${refreshToken}; path=/; secure; expires=${refreshTokenExpireDate.toUTCString()};`;
-    document.cookie = `${USERNAME_KEY}=${username}; path=/; secure; expires=${accessTokenExpireDate.toUTCString()};`;
+    const isSecure = window.location.protocol === 'https:';
+    const secureFlag = isSecure ? 'secure;' : '';
+
+    document.cookie = `${TOKEN_KEY}=${accessToken}; path=/; ${secureFlag} SameSite=Lax; expires=${accessTokenExpireDate.toUTCString()};`;
+    document.cookie = `${REFRESH_TOKEN_KEY}=${refreshToken}; path=/; ${secureFlag} SameSite=Lax; expires=${refreshTokenExpireDate.toUTCString()};`;
+    document.cookie = `${USERNAME_KEY}=${username}; path=/; ${secureFlag} SameSite=Lax; expires=${accessTokenExpireDate.toUTCString()};`;
 };
 
 export const getCookie = (name) => {
@@ -34,6 +38,7 @@ export const getCookie = (name) => {
 
 export const getAccessToken = () => getCookie(TOKEN_KEY);
 export const getRefreshToken = () => getCookie(REFRESH_TOKEN_KEY);
+export const getUsername = () => getCookie(USERNAME_KEY);
 
 export const clearTokens = () => {
     const cookies = document.cookie.split(";");
@@ -75,10 +80,15 @@ export const refreshAccessToken = async () => {
             return;
         }
 
-        if (isAccessTokenExpiringSoon() || !getAccessToken()) {
-            const response = await axios.post('/api/refresh', { refresh_token: refreshToken });
+        if (isAccessTokenExpiringSoon() || !getAccessToken() || !getUsername()) {
+            const response = await axios.post(`${apiUrl}/api/refresh`, {
+                refresh_token: refreshToken
+            }, {
+                withCredentials: true,
+            });
+            
             if (response.status === 200) {
-                setTokens(response.data.access_token, response.data.refresh_token, response.data.expire_time, response.data.refresh_expire_time, response.data.username, response.data.email);
+                setTokens(response.data.username, response.data.email, response.data.access_token, response.data.refresh_token, response.data.expire_time, response.data.refresh_expire_time);
                 console.log('Token odświeżony pomyślnie.');
                 return response.data.access_token;
             }

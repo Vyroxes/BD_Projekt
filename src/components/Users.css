@@ -147,13 +147,24 @@
     font-size: 0.8rem;
     margin-left: auto;
     font-weight: 500;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    min-width: 70px;
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 .user-item-admin {
     background: rgba(33, 150, 243, 0.2);
     color: #2196f3;
-    border-color: rgba(33, 150, 243, 0.3);
+    border: 2px solid rgba(33, 150, 243, 0.5);
+}
+
+.user-item:hover .user-item-role {
+    border-color: rgba(76, 175, 80, 1);
+}
+
+.user-item:hover .user-item-admin {
+    border-color: rgb(23, 150, 253);
 }
 
 .no-users-found {
