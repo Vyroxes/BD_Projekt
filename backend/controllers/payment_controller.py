@@ -5,12 +5,16 @@ import pytz
 def create_subscription(user, plan):
     poland_timezone = pytz.timezone('Europe/Warsaw')
     now_poland = datetime.now(poland_timezone)
+    
     subscription = Subscription(
-        user_id=user.id,
-        stripe_subscription_id="",
+        username=user.username,
+        email=user.email,
+        plan=plan,
         status="PENDING",
-        current_period_end=now_poland + timedelta(days=30),
-        created_at=now_poland
+        payment_id=None,
+        payment_intent=None,
+        start_date=now_poland,
+        end_date=now_poland + timedelta(days=30)
     )
     db.session.add(subscription)
     db.session.commit()

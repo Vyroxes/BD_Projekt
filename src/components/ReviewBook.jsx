@@ -71,6 +71,12 @@ const ReviewBook = () => {
     };
 
     const deleteReview = async () => {
+        const confirmCancel = window.confirm("Czy na pewno chcesz usunąć recenzję?");
+        
+        if (!confirmCancel) {
+            return;
+        }
+        
         try {
             let response;
             const type = location.pathname.startsWith("/bc-review-book/") ? "bc" : "wl";
