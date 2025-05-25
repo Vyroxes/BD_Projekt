@@ -33,6 +33,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["DISCORD_CLIENT_ID"] =  os.getenv('DISCORD_CLIENT_ID')
 app.config["DISCORD_CLIENT_SECRET"] = os.getenv('DISCORD_CLIENT_SECRET')
 app.config["DISCORD_REDIRECT_URI"] = os.getenv('DISCORD_CALLBACK_URL')
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "true"
 
