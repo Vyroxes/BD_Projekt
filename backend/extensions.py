@@ -25,7 +25,6 @@ jwt = JWTManager()
 cors = CORS(resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
 talisman = Talisman(
     force_https=True,
-    frame_options='DENY',
     content_security_policy={
         'default-src': "'self'",
         'script-src': "'self' 'unsafe-inline'",

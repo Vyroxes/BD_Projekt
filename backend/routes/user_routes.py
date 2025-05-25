@@ -20,7 +20,7 @@ def delete_account(username):
         if not user:
             return jsonify({"message": "Użytkownik nie istnieje."}), 404
         
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.get(User, current_user_id)
 
         if user.id != int(current_user_id) and current_user.username.lower() != admin_username.lower():
             return jsonify({"message": "Brak uprawnień do usunięcia tego konta."}), 403
@@ -77,19 +77,3 @@ def get_users():
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({"message": f"Błąd podczas pobierania danych użytkowników: {str(e)}"}), 500
-
-@user_bp.route('/api/<string:username>/<string:type>', methods=['GET'])
-@jwt_required()
-def get_list(username, type):
-    user = User.query.filter(func.lower(User.username) == username.lower()).first()
-    if not user:
-        return jsonify({"message": "Użytkownik nie istnieje."}), 404
-
-    if type == 'bc':
-        book_collection = BookCollection.query.filter_by(user_id=user.id).all()
-        book_collection_data = [book.to_dict() for book in book_collection]
-        return jsonify(book_collection_data), 200
-    elif type == 'wl':
-        wish_list = WishList.query.filter_by(user_id=user.id).all()
-        wish_list_data = [book.to_dict() for book in wish_list]
-        return jsonify(wish_list_data), 200

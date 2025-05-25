@@ -25,6 +25,7 @@ app = Flask(__name__)
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['TESTING'] = False
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'users.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -40,7 +41,8 @@ limiter.init_app(app)
 bcrypt.init_app(app)
 jwt.init_app(app)
 cors.init_app(app)
-talisman.init_app(app)
+if app.config.get("TESTING", False):
+    talisman.init_app(app)
 discord.init_app(app)
 oauth.init_app(app)
 

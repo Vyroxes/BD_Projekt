@@ -2,6 +2,8 @@ from datetime import datetime
 from sqlite3 import IntegrityError
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import func
+from models.user import User
 from controllers.books_controller import add_book_to_collection, add_book_to_wishlist
 from models.book_collection import BookCollection
 from models.wishlist import WishList
@@ -9,6 +11,22 @@ from models import db
 from extensions import limiter
 
 books_bp = Blueprint('booklist_bp', __name__)
+
+@books_bp.route('/api/<string:username>/<string:type>', methods=['GET'])
+@jwt_required()
+def get_list(username, type):
+    user = User.query.filter(func.lower(User.username) == username.lower()).first()
+    if not user:
+        return jsonify({"message": "Użytkownik nie istnieje."}), 404
+
+    if type == 'bc':
+        book_collection = BookCollection.query.filter_by(user_id=user.id).all()
+        book_collection_data = [book.to_dict() for book in book_collection]
+        return jsonify(book_collection_data), 200
+    elif type == 'wl':
+        wish_list = WishList.query.filter_by(user_id=user.id).all()
+        wish_list_data = [book.to_dict() for book in wish_list]
+        return jsonify(wish_list_data), 200
 
 @books_bp.route('/api/add-book/<string:type>', methods=['POST'])
 @limiter.exempt

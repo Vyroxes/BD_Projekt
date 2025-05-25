@@ -121,7 +121,7 @@ def auth_github():
         except Exception as e:
             return jsonify({"message": "Nieprawidłowy token JWT."}), 401
 
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.get(User, current_user_id)
         if current_user is None:
             return jsonify({"message": "Użytkownik nie istnieje."}), 404
 
