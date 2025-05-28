@@ -280,7 +280,7 @@
     }
 }
 
-@media (max-width: 1244px) {
+@media (max-width: 1262px) {
     .book-collection-bar {
         display: flex;
         flex-direction: column;

@@ -1,3 +1,4 @@
+
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { authAxios } from '../utils/Auth';
@@ -9,6 +10,10 @@ const EditBook = () =>
     const navigate = useNavigate();
     const location = useLocation();
     const [showCover, setShowCover] = useState(false);
+    const [showCoverSearch, setShowCoverSearch] = useState(false);
+    const [coverSearchResults, setCoverSearchResults] = useState([]);
+    const [coverSearchLoading, setCoverSearchLoading] = useState(false);
+    const [coverSearchError, setCoverSearchError] = useState("");
     const [checkedList, setCheckedList] = useState([]);
     const [book, setBook] = useState([]);
 
@@ -75,6 +80,34 @@ const EditBook = () =>
             setCheckedList(book.genres.split(", "));
         }
     }, [book]);
+
+    const handleCoverSearch = async () => {
+        setCoverSearchLoading(true);
+        setCoverSearchError("");
+        setCoverSearchResults([]);
+        try {
+            const response = await authAxios.get(`${apiUrl}/api/search-covers`, {
+                params: {
+                    title,
+                    author
+                }
+            });
+            if (response.status === 200 && Array.isArray(response.data)) {
+                setCoverSearchResults(response.data);
+            } else {
+                setCoverSearchError("Brak wyników lub błąd odpowiedzi.");
+            }
+        } catch (error) {
+            setCoverSearchError("Błąd podczas wyszukiwania okładek.");
+        } finally {
+            setCoverSearchLoading(false);
+        }
+    };
+
+    const handleSelectCover = (url) => {
+        setCover(url);
+        setShowCoverSearch(false);
+    };
 
     const checkBookID = async () => 
     {
@@ -232,10 +265,33 @@ const EditBook = () =>
                                     onChange={(e) => handleFileUpload(e.target.files[0])}
                                 />
                             </label>
-                            <button type="button" onClick={() => setShowCover(!showCover)}>
+                            <button type="button" onClick={() => setShowCover(!showCover)} style={{marginRight: '8px'}}>
                                 {showCover ? "Ukryj podgląd okładki" : "Pokaż podgląd okładki"}
                             </button>
+                            <button type="button" onClick={() => { setShowCoverSearch(true); handleCoverSearch(); }}>
+                                Wyszukaj okładkę
+                            </button>
                         </div>
+                        {showCoverSearch && (
+                            <div>
+                                <div className="add-book-covers">
+                                    <h2>Wyniki wyszukiwania okładek</h2>
+                                    <button onClick={() => setShowCoverSearch(false)}>✕</button>
+                                    {coverSearchLoading && <div>Ładowanie...</div>}
+                                    {coverSearchError && <div style={{color: 'red'}}>{coverSearchError}</div>}
+                                    {!coverSearchLoading && !coverSearchError && coverSearchResults.length === 0 && (
+                                        <div>Brak wyników.</div>
+                                    )}
+                                    <div className="add-book-covers-list">
+                                        {coverSearchResults.map((url, index) => (
+                                            <div key={index} className="add-book-covers-book" style={{"--card-index": index}} onClick={() => handleSelectCover(url)}>
+                                                <img src={url} alt="Okładka"/>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         {showCover && (
                         <div className="add-book-cover">
                             <img src={cover || "unknown.jpg"} alt="Podgląd okładki" style={{ maxWidth: "350px", maxHeight: "500px" }} />
@@ -270,19 +326,6 @@ const EditBook = () =>
                             </label>
                         </div>
                         <div className="add-book-row-genres">
-                            {/* <label>
-                                Gatunki:
-                                <input
-                                    type="text"
-                                    id='genres'
-                                    name='genres'
-                                    value={genres}
-                                    onChange={(e) => setGenres(e.target.value)}
-                                    required
-                                    minLength="5"
-                                    maxLength="100"
-                                />
-                            </label> */}
                             <a>Gatunki:</a>
                             {genresList.map((genre) => (
                                 <label key={genre}>

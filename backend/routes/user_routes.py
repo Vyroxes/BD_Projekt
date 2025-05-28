@@ -5,6 +5,7 @@ from controllers.user_controller import delete_user_and_data, get_all_users, get
 from models.subscription import Subscription
 from models import User, BookCollection, WishList, db
 from sqlalchemy import func
+from routes.activity_tracker import is_user_active
 import os
 
 user_bp = Blueprint('user_bp', __name__)
@@ -73,7 +74,12 @@ def get_user(username):
 def get_users():
     try:
         users = get_all_users()
-        user_list = [{"username": u.username, "email": u.email, "avatar_url": u.avatar or ""} for u in users]
+        user_list = [{
+            "username": user.username,
+            "email": user.email,
+            "avatar_url": user.avatar or "",
+            "is_active": is_user_active(user.id)
+        } for user in users]
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({"message": f"Błąd podczas pobierania danych użytkowników: {str(e)}"}), 500

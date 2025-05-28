@@ -6,6 +6,7 @@ from flask import Blueprint, redirect, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token, decode_token
 import os
 from sqlalchemy import func
+from routes.activity_tracker import set_user_active
 from models.user import User
 from extensions import discord, oauth
 from models import db
@@ -64,6 +65,8 @@ def auth_discord():
             db.session.add(user)
             db.session.commit()
         
+        set_user_active(user.id)
+
         access_token_expiresIn = "00:00:10:00"
         refresh_token_expiresIn = "01:00:00:00"
 
@@ -143,6 +146,8 @@ def auth_github():
             user.avatar = avatar_url
         db.session.commit()
 
+        set_user_active(user.id)
+
         access_token_expiresIn = "00:00:10:00"
         refresh_token_expiresIn = "01:00:00:00"
 
@@ -167,6 +172,8 @@ def auth_github():
         new_user = User(username=username, email=email, password=random_password, avatar=avatar_url, github_id=github_id)
         db.session.add(new_user)
         db.session.commit()
+
+        set_user_active(new_user.id)
 
         access_token_expiresIn = "00:00:10:00"
         refresh_token_expiresIn = "01:00:00:00"

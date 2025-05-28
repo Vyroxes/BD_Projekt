@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoMdClose } from "react-icons/io";
+import { FaCircle } from "react-icons/fa";
 import { authAxios, getCookie } from '../utils/Auth';
 
 import './Users.css';
@@ -86,7 +87,10 @@ const Users = () => {
                             loading="lazy"
                         />
                         <div className="user-item-info">
-                            <span className="user-item-name">{user.username}</span>
+                            <div className="user-item-info-header">
+                                <span className="user-item-name">{user.username}</span>
+                                <span className={`status-dot-${user.is_active ? 'active' : 'inactive'}`}><FaCircle /></span>
+                            </div>
                             <span className="user-item-email">{user.email}</span>
                         </div>
                         {user.username === adminUsername && (

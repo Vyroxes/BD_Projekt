@@ -127,6 +127,13 @@
     flex: 1;
 }
 
+.user-item-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
 .user-item-name {
     font-size: 1.2rem;
     font-weight: 600;
@@ -178,6 +185,14 @@
     border: 1px dashed rgba(255, 255, 255, 0.2);
     animation: slideInRight 0.5s ease forwards;
     animation-delay: calc(var(--index) * 0.1s);
+}
+
+.status-dot-active {
+    color: rgba(76, 175, 80, 1);
+}
+
+.status-dot-inactive {
+    color: rgba(255, 0, 0, 1);
 }
 
 @keyframes slideInDown {

@@ -10,6 +10,10 @@ const AddBook = () =>
     const location = useLocation();
     const [addBookMethod, setAddBookMethod] = useState("");
     const [showCover, setShowCover] = useState(false);
+    const [showCoverSearch, setShowCoverSearch] = useState(false);
+    const [coverSearchResults, setCoverSearchResults] = useState([]);
+    const [coverSearchLoading, setCoverSearchLoading] = useState(false);
+    const [coverSearchError, setCoverSearchError] = useState("");
     const [checkedList, setCheckedList] = useState([]);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -56,6 +60,34 @@ const AddBook = () =>
     {
         setGenres(checkedList.sort((a, b) => genresList.indexOf(a) - genresList.indexOf(b)).join(", "));
     }, [checkedList]);
+
+    const handleCoverSearch = async () => {
+        setCoverSearchLoading(true);
+        setCoverSearchError("");
+        setCoverSearchResults([]);
+        try {
+            const response = await authAxios.get(`${apiUrl}/api/search-covers`, {
+                params: {
+                    title,
+                    author
+                }
+            });
+            if (response.status === 200 && Array.isArray(response.data)) {
+                setCoverSearchResults(response.data);
+            } else {
+                setCoverSearchError("Brak wyników lub błąd odpowiedzi.");
+            }
+        } catch (error) {
+            setCoverSearchError("Błąd podczas wyszukiwania okładek.");
+        } finally {
+            setCoverSearchLoading(false);
+        }
+    };
+
+    const handleSelectCover = (url) => {
+        setCover(url);
+        setShowCoverSearch(false);
+    };
 
     const handleFileUpload = (file) =>
     {
@@ -424,7 +456,30 @@ const AddBook = () =>
                                         <button type="button" onClick={() => setShowCover(!showCover)}>
                                             {showCover ? "Ukryj podgląd okładki" : "Pokaż podgląd okładki"}
                                         </button>
+                                        <button type="button" disabled={!title.trim() || !author.trim()} onClick={() => { setShowCoverSearch(true); handleCoverSearch(); }}>
+                                            Wyszukaj okładkę
+                                        </button>
                                     </div>
+                                    {showCoverSearch && (
+                                        <div>
+                                            <div className="add-book-covers">
+                                                <h2>Wyniki wyszukiwania okładek</h2>
+                                                <button onClick={() => setShowCoverSearch(false)}>✕</button>
+                                                {coverSearchLoading && <div>Ładowanie...</div>}
+                                                {coverSearchError && <div style={{color: 'red'}}>{coverSearchError}</div>}
+                                                {!coverSearchLoading && !coverSearchError && coverSearchResults.length === 0 && (
+                                                    <div>Brak wyników.</div>
+                                                )}
+                                                <div className="add-book-covers-list">
+                                                    {coverSearchResults.map((url, index) => (
+                                                        <div key={index} className="add-book-covers-book" style={{"--card-index": index}} onClick={() => handleSelectCover(url)}>
+                                                            <img src={url} alt="Okładka"/>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                     {showCover && (
                                         <div className="add-book-cover">
                                             <img src={cover || "unknown.jpg"} alt="Podgląd okładki" style={{ maxWidth: "350px", maxHeight: "500px" }} />

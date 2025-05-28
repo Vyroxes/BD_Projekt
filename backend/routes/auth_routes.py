@@ -7,6 +7,7 @@ from controllers.auth_controller import authenticate_user
 from models import TokenBlacklist, db, User
 from datetime import datetime, timedelta
 from models import User
+from routes.activity_tracker import active_users, set_user_active
 import re
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -105,6 +106,7 @@ def logout():
         db.session.add(refresh_blacklist)
         db.session.commit()
 
+        active_users.pop(user.id, None)
         return jsonify({"message": "Wylogowano pomyślnie."}), 200
     except Exception as e:
         return jsonify({"message": "Błąd podczas wylogowania: " + str(e)}), 500
@@ -136,6 +138,8 @@ def login():
             refresh_token_expire = "00:01:00:00"
             refresh_expires_delta = timedelta(hours=1)
 
+        set_user_active(user.id)
+
         access_token = create_access_token(identity=str(user.id), expires_delta=access_expires_delta)
         refresh_token = create_refresh_token(identity=str(user.id), expires_delta=refresh_expires_delta)
 
@@ -148,7 +152,7 @@ def login():
             "expire_time": str(access_token_expire),
             "refresh_expire_time": str(refresh_token_expire)
         }))
-
+        
         return response, 200
 
     return jsonify({"message": "Niepoprawne dane."}), 401
@@ -196,7 +200,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-       
+        set_user_active(new_user.id)
+
         access_token_expire = "00:00:10:00"
         access_expires_delta = timedelta(minutes=10)
         refresh_token_expire = "00:01:00:00"
